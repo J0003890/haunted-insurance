@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — สำนักงานต้องสาป</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Press+Start+2P&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/admin.css" />
+</head>
+
+<body>
+
+    <!-- ================================================
+       PASSWORD GATE
+       Shown on load. Hides everything else.
+       ================================================ -->
+    <div id="gate" class="gate-screen">
+        <div class="gate-card">
+            <p class="gate-game-name">💀 สำนักงานต้องสาป</p>
+            <h1 class="gate-title">🔧 Admin Panel</h1>
+            <p class="gate-subtitle">เฉพาะผู้ดูแลระบบเท่านั้น</p>
+            <input type="password" id="gate-input" class="gate-input" placeholder="รหัสผ่าน"
+                onkeydown="if(event.key==='Enter') checkPassword()" autofocus />
+            <p id="gate-error" class="gate-error hidden">❌ รหัสผ่านไม่ถูกต้อง</p>
+            <button class="btn-primary" onclick="checkPassword()">เข้าสู่ระบบ</button>
+        </div>
+    </div>
+
+
+    <!-- ================================================
+       MAIN ADMIN PANEL
+       Hidden until correct password is entered.
+       ================================================ -->
+    <div id="admin-panel" class="hidden">
+
+        <!-- ── HEADER ── -->
+        <header class="admin-header">
+            <div class="admin-header-left">
+                <h1 class="admin-title">🔧 Admin Panel — สำนักงานต้องสาป</h1>
+                <p id="header-stats" class="header-stats">กำลังโหลด...</p>
+            </div>
+            <div class="admin-header-right">
+                <!-- ★ PHASE 3: DASHBOARD BUTTON ★ -->
+                <a href="dashboard.html" class="btn-secondary" style="text-decoration: none; color: var(--pink); border-color: var(--pink);">📊 Dashboard</a>
+                
+                <!-- ★ PHASE 4: EXPORT BUTTON ★ -->
+                <button class="btn-secondary" onclick="exportQuestionsToExcel()" style="color: #16a34a; border-color: #16a34a;">📥 Export คำถาม</button>
+
+                <button class="btn-secondary" onclick="loadAllQuestions()">🔄 รีเฟรช</button>
+                <button class="btn-icon-toggle" id="dark-mode-btn" onclick="toggleDarkMode()"
+                    title="สลับ Dark/Light Mode">
+                    🌙
+                </button>
+                <button class="btn-ghost-sm" onclick="logout()">ออกจากระบบ</button>
+            </div>
+        </header>
+
+        <!-- ── TWO-COLUMN MAIN LAYOUT ── -->
+        <main class="admin-main">
+
+
+            <!-- ════════════════════════════════════════
+           LEFT COLUMN — Add / Edit Question Form
+           ════════════════════════════════════════ -->
+            <section class="form-section">
+
+                <div class="section-header">
+                    <h2 class="section-title" id="form-title">➕ เพิ่มคำถามใหม่</h2>
+                </div>
+
+                <form id="question-form" onsubmit="submitQuestion(event)" novalidate>
+
+                    <!-- Hidden: stores document ID when in edit mode -->
+                    <input type="hidden" id="edit-id" value="" />
+
+                    <!-- ── Insurance Type ── -->
+                    <div class="form-group">
+                        <label class="form-label">ประเภทประกัน <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="insuranceType" value="life" onchange="populateStageDropdown()"
+                                    checked />
+                                <span class="radio-text">💙 ประกันชีวิต</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="insuranceType" value="nonlife"
+                                    onchange="populateStageDropdown()" />
+                                <span class="radio-text">🤍 ประกันวินาศภัย</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- ── Stage ── -->
+                    <div class="form-group">
+                        <label class="form-label" for="stage-select">
+                            ด่าน (Stage) <span class="required">*</span>
+                        </label>
+                        <select id="stage-select" class="form-select" required></select>
+                    </div>
+
+                    <!-- ── Question Text ── -->
+                    <div class="form-group">
+                        <label class="form-label" for="q-text-input">
+                            คำถาม <span class="required">*</span>
+                        </label>
+                        <textarea id="q-text-input" class="form-textarea" rows="3" placeholder="พิมพ์คำถามที่นี่..."
+                            required></textarea>
+                    </div>
+
+                    <!-- ── Left Option ── -->
+                    <div class="form-group">
+                        <label class="form-label" for="left-option">
+                            ตัวเลือกประตูซ้าย <span class="required">*</span>
+                        </label>
+                        <input type="text" id="left-option" class="form-input" placeholder="ข้อความบนประตูซ้าย"
+                            required />
+                    </div>
+
+                    <!-- ── Right Option ── -->
+                    <div class="form-group">
+                        <label class="form-label" for="right-option">
+                            ตัวเลือกประตูขวา <span class="required">*</span>
+                        </label>
+                        <input type="text" id="right-option" class="form-input" placeholder="ข้อความบนประตูขวา"
+                            required />
+                    </div>
+
+                    <!-- ── Correct Answer ── -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            คำตอบที่ถูกต้อง <span class="required">*</span>
+                        </label>
+                        <div class="radio-group">
+                            <label class="radio-label radio-label--correct">
+                                <input type="radio" name="correctAnswer" value="left" checked />
+                                <span class="radio-text">◀ ประตูซ้าย</span>
+                            </label>
+                            <label class="radio-label radio-label--correct">
+                                <input type="radio" name="correctAnswer" value="right" />
+                                <span class="radio-text">ประตูขวา ▶</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- ── Explanation ── -->
+                    <div class="form-group">
+                        <label class="form-label" for="explanation">
+                            คำอธิบาย (แสดงหลังผู้เล่นตอบ) <span class="required">*</span>
+                        </label>
+                        <textarea id="explanation" class="form-textarea" rows="3"
+                            placeholder="อธิบายว่าทำไมคำตอบนั้นถึงถูกหรือผิด..." required></textarea>
+                    </div>
+
+                    <!-- ── Rarity ── -->
+                    <div class="form-group">
+                        <label class="form-label" for="rarity-select">ความหายาก (Rarity)</label>
+                        <select id="rarity-select" class="form-select" onchange="updateRarityPreview()">
+                            <option value="N">📄 N — ธรรมดา (ค่าเริ่มต้น)</option>
+                            <option value="R">📘 R — หายาก</option>
+                            <option value="SR">⭐ SR — หายากมาก</option>
+                            <option value="UR">💎 UR — หายากที่สุด</option>
+                        </select>
+                        <!-- Live preview of selected rarity -->
+                        <div id="rarity-preview" class="rarity-preview"></div>
+                    </div>
+
+                    <!-- ── Active Status ── -->
+                    <div class="form-group">
+                        <label class="form-label">สถานะ</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="isActive" value="true" checked />
+                                <span class="radio-text">✅ เปิดใช้งาน</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="isActive" value="false" />
+                                <span class="radio-text">🚫 ซ่อน (ไม่แสดงในเกม)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- ── Form Actions ── -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="submit-btn">
+                            ➕ เพิ่มคำถาม
+                        </button>
+                        <button type="button" class="btn-secondary hidden" id="cancel-edit-btn" onclick="cancelEdit()">
+                            ✕ ยกเลิกการแก้ไข
+                        </button>
+                    </div>
+
+                    <!-- Status message (success / error) -->
+                    <div id="form-message" class="form-message hidden"></div>
+
+                </form>
+            </section>
+
+
+            <!-- ════════════════════════════════════════
+           RIGHT COLUMN — Question Bank
+           ════════════════════════════════════════ -->
+            <section class="bank-section">
+
+                <div class="section-header">
+                    <h2 class="section-title">📚 คลังคำถาม</h2>
+                </div>
+
+                <!-- ── Filter Bar ── -->
+                <div class="filter-bar">
+                    <select id="filter-type" class="filter-select" onchange="onFilterTypeChange()">
+                        <option value="all">ทุกประเภท</option>
+                        <option value="life">💙 ประกันชีวิต</option>
+                        <option value="nonlife">🤍 ประกันวินาศภัย</option>
+                    </select>
+
+                    <select id="filter-stage" class="filter-select" onchange="applyFilters()">
+                        <option value="all">ทุกด่าน</option>
+                    </select>
+
+                    <select id="filter-rarity" class="filter-select" onchange="applyFilters()">
+                        <option value="all">ทุก Rarity</option>
+                        <option value="N">📄 N</option>
+                        <option value="R">📘 R</option>
+                        <option value="SR">⭐ SR</option>
+                        <option value="UR">💎 UR</option>
+                    </select>
+
+                    <select id="filter-active" class="filter-select" onchange="applyFilters()">
+                        <option value="all">ทุกสถานะ</option>
+                        <option value="true">✅ เปิดใช้งาน</option>
+                        <option value="false">🚫 ซ่อน</option>
+                    </select>
+                </div>
+
+                <!-- ── Stats Row ── -->
+                <div id="bank-stats" class="bank-stats"></div>
+
+                <!-- ── Question Cards ── -->
+                <div id="question-bank" class="question-bank">
+                    <p class="loading-text">กำลังโหลดคำถาม...</p>
+                </div>
+
+            </section>
+
+        </main>
+    </div><!-- end #admin-panel -->
+
+
+    <!-- Firebase + Config + Admin Logic -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- ★ PHASE 4: SHEETJS EXCEL LIBRARY ★ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script src="js/config.js"></script>
+    <script src="js/admin.js"></script>
+
+</body>
+
+</html>

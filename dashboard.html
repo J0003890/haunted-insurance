@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — สำนักงานต้องสาป</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet" />
+    
+    <!-- We will leverage your existing admin.css for the baseline theme (colors, header, etc.) -->
+    <link rel="stylesheet" href="css/admin.css" />
+
+    <!-- Specific Dashboard Styles -->
+    <style>
+        .dashboard-main {
+            padding: 20px 24px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Overview Cards */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .overview-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .overview-value {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 24px;
+            color: var(--pink);
+            margin: 10px 0;
+        }
+
+        .overview-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        /* Filter Section */
+        .dashboard-filters {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow);
+            align-items: center;
+        }
+
+        .calc-toggle {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface-2);
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .calc-toggle select {
+            font-family: 'Sarabun', sans-serif;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            color: var(--pink);
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Question Kill Rate Cards */
+        .kill-board {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .kr-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 22px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kr-card.boss-tier {
+            border-color: var(--error);
+            box-shadow: 0 0 12px rgba(220, 38, 38, 0.15);
+        }
+
+        .kr-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 20px;
+        }
+
+        .kr-question {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .kr-stage-chip {
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* Progress Bar Styles */
+        .bar-wrap {
+            margin-bottom: 12px;
+        }
+
+        .bar-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 6px;
+        }
+
+        .bar-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bar-stats {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            color: var(--text);
+        }
+
+        .bar-track {
+            width: 100%;
+            height: 14px;
+            background: var(--surface-2);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.8s ease-out;
+        }
+
+        /* Color Coding based on Kill Rate */
+        .fill-safe     { background: #16a34a; } /* 0-30% */
+        .fill-moderate { background: #d97706; } /* 31-60% */
+        .fill-high     { background: var(--pink); box-shadow: 0 0 8px var(--pink-glow); } /* 61-80% */
+        .fill-brutal   { background: var(--error); box-shadow: 0 0 12px rgba(220,38,38,0.5); } /* 81-100% */
+
+        /* Sub-bars (Breakdown) */
+        .kr-breakdown {
+            display: flex;
+            gap: 24px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .sub-bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sub-bar-title {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .sub-bar-track {
+            width: 100%;
+            height: 6px;
+            background: var(--surface-2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .sub-bar-text {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            text-align: right;
+        }
+
+        /* Empty State */
+        .empty-dashboard {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px dashed var(--border-dark);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- PASSWORD GATE -->
+    <div id="gate" class="gate-screen">
+        <div class="gate-card">
+            <p class="gate-game-name">💀 สำนักงานต้องสาป</p>
+            <h1 class="gate-title">📊 Analytics Dashboard</h1>
+            <p class="gate-subtitle">เฉพาะผู้ดูแลระบบเท่านั้น</p>
+            <input type="password" id="gate-input" class="gate-input" placeholder="รหัสผ่าน"
+                onkeydown="if(event.key==='Enter') checkPassword()" autofocus />
+            <p id="gate-error" class="gate-error hidden">❌ รหัสผ่านไม่ถูกต้อง</p>
+            <button class="btn-primary" onclick="checkPassword()">เข้าสู่ระบบ</button>
+        </div>
+    </div>
+
+
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboard-panel" class="hidden">
+
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="admin-header-left">
+                <h1 class="admin-title">📊 Analytics Dashboard — สำนักงานต้องสาป</h1>
+                <p class="header-stats">วิเคราะห์อัตราการรอดชีวิตของพนักงาน</p>
+            </div>
+            <div class="admin-header-right">
+                <a href="admin.html" class="btn-secondary" style="text-decoration: none;">⚙️ กลับไปที่ Admin Panel</a>
+                <!-- ★ PHASE 4: EXPORT BUTTON ★ -->
+                <button class="btn-secondary" onclick="exportAnalyticsToExcel()" style="color: #16a34a; border-color: #16a34a;">📥 Export Excel</button>
+                <button class="btn-secondary" onclick="loadDashboardData()">🔄 รีเฟรชข้อมูล</button>
+                <button class="btn-icon-toggle" id="dark-mode-btn" onclick="toggleDarkMode()" title="สลับ Dark/Light Mode">🌙</button>
+                <button class="btn-ghost-sm" onclick="logout()">ออกจากระบบ</button>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+
+            <!-- OVERVIEW CARDS -->
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <p class="overview-label">👥 ผู้เข้าสอบทั้งหมด (Unique)</p>
+                    <h2 class="overview-value" id="stat-total">0</h2>
+                    <p class="header-stats" id="stat-attempts">จากการตอบทั้งหมด 0 ครั้ง</p>
+                </div>
+                <div class="overview-card">
+                    <p class="overview-label">🏢 สำนักงานใหญ่</p>
+                    <h2 class="overview-value" id="stat-hq">0</h2>
+                </div>
+                <div class="overview-card">
+                    <p class="overview-label">👤 พนักงานปัจจุบัน</p>
+                    <h2 class="overview-value" id="stat-current">0</h2>
+                </div>
+                <div class="overview-card">
+                    <p class="overview-label">🆕 New CO</p>
+                    <h2 class="overview-value" id="stat-newco">0</h2>
+                </div>
+            </div>
+
+            <!-- FILTERS -->
+            <div class="dashboard-filters">
+                <select id="filter-exam" class="filter-select" onchange="renderDashboard()">
+                    <option value="all">ทุกประเภทข้อสอบ</option>
+                    <option value="life">💙 ประกันชีวิต</option>
+                    <option value="nonlife">🤍 ประกันวินาศภัย</option>
+                </select>
+
+                <select id="filter-type" class="filter-select" onchange="handleTypeFilterChange()">
+                    <option value="all">กลุ่มพนักงาน: ทั้งหมด</option>
+                    <option value="hq">🏢 สำนักงานใหญ่</option>
+                    <option value="current">👤 พนักงานปัจจุบัน</option>
+                    <option value="newco">🆕 New CO</option>
+                </select>
+
+                <!-- Dynamic Sub-filters (Hidden by default) -->
+                <select id="filter-area" class="filter-select hidden" onchange="renderDashboard()">
+                    <option value="all">ทุกพื้นที่</option>
+                    <option value="กรุงเทพฯ-ปริมณฑลตะวันออก">กรุงเทพฯ-ปริมณฑลตะวันออก</option>
+                    <option value="กรุงเทพฯ-ปริมณฑลตะวันตก">กรุงเทพฯ-ปริมณฑลตะวันตก</option>
+                    <option value="ภาคกลาง">ภาคกลาง</option>
+                    <option value="ภาคตะวันออก">ภาคตะวันออก</option>
+                    <option value="ภาคตะวันออกเฉียงเหนือตอนบน">ภาคตะวันออกเฉียงเหนือตอนบน</option>
+                    <option value="ภาคตะวันออกเฉียงเหนือตอนล่าง">ภาคตะวันออกเฉียงเหนือตอนล่าง</option>
+                    <option value="ภาคใต้">ภาคใต้</option>
+                </select>
+
+                <select id="filter-cohort" class="filter-select hidden" onchange="renderDashboard()">
+                    <option value="all">ทุกรุ่น (Cohort)</option>
+                    <!-- Populated dynamically -->
+                </select>
+
+                <div class="calc-toggle">
+                    <span class="overview-label">คำนวณจาก: </span>
+                    <select id="calc-method" onchange="renderDashboard()">
+                        <option value="attempts">จำนวนครั้งที่ตอบ (Total Attempts)</option>
+                        <option value="unique">จำนวนคน (Unique Players)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- QUESTION KILL BOARD -->
+            <div id="kill-board" class="kill-board">
+                <div class="empty-dashboard">
+                    <h2>กำลังดึงข้อมูลวิญญาณ...</h2>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Firebase + Config -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <!-- ★ PHASE 4: SHEETJS EXCEL LIBRARY ★ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="js/config.js"></script>
+
+    <!-- Dashboard Logic -->
+    <script>
+        const ADMIN_PASSWORD = 'insurlearn2026';
+        let rawQuestions = [];
+        let rawLogs = [];
+        let currentKillData = []; // Phase 4: Store this globally for export
+
+        /* ================================================
+           INIT & AUTH
+           ================================================ */
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('adminDarkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+
+            // ★ SESSION AUTH CHECK: Skip password if already logged in this session ★
+            if (sessionStorage.getItem('adminAuthenticated') === 'true') {
+                document.getElementById('gate').style.display = 'none';
+                document.getElementById('dashboard-panel').classList.remove('hidden');
+                loadDashboardData();
+            }
+        });
+
+        function checkPassword() {
+            const input = document.getElementById('gate-input');
+            const error = document.getElementById('gate-error');
+
+            if (input.value === ADMIN_PASSWORD) {
+                document.getElementById('gate').style.display = 'none';
+                document.getElementById('dashboard-panel').classList.remove('hidden');
+                sessionStorage.setItem('adminAuthenticated', 'true'); // Save auth state
+                loadDashboardData();
+            } else {
+                error.classList.remove('hidden');
+                input.value = '';
+                input.focus();
+                document.querySelector('.gate-card').style.animation = 'none';
+                requestAnimationFrame(() => document.querySelector('.gate-card').style.animation = 'gateShake 0.35s ease');
+            }
+        }
+
+        function logout() {
+            if (confirm('ออกจากระบบ Analytics?')) {
+                sessionStorage.removeItem('adminAuthenticated'); // Clear auth state
+                location.reload();
+            }
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('adminDarkMode', isDark);
+        }
+
+        /* ================================================
+           DATA FETCHING
+           ================================================ */
+        async function loadDashboardData() {
+            const board = document.getElementById('kill-board');
+            board.innerHTML = `<div class="empty-dashboard"><h2>⏳ กำลังดึงข้อมูลจากยมโลก...</h2></div>`;
+
+            try {
+                // Fetch Questions
+                const qSnap = await window.db.collection('questions').get();
+                rawQuestions = qSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                // Fetch Answer Logs
+                const lSnap = await window.db.collection('answerLogs').get();
+                rawLogs = lSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                populateCohortDropdown();
+                renderDashboard();
+            } catch (e) {
+                console.error("Dashboard Load Error:", e);
+                board.innerHTML = `
+                    <div class="empty-dashboard" style="color:var(--error);">
+                        <h2>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</h2>
+                        <p>${e.message}</p>
+                        <p style="margin-top:10px; font-weight:bold;">⚠️ หมายเหตุ: โปรดแน่ใจว่าได้แก้ Firestore Rules ให้ answerLogs เป็น allow read: if true; แล้ว</p>
+                    </div>`;
+            }
+        }
+
+        /* ================================================
+           FILTER HANDLING
+           ================================================ */
+        function handleTypeFilterChange() {
+            const type = document.getElementById('filter-type').value;
+            const areaDrop = document.getElementById('filter-area');
+            const cohortDrop = document.getElementById('filter-cohort');
+
+            areaDrop.classList.add('hidden');
+            cohortDrop.classList.add('hidden');
+            areaDrop.value = 'all';
+            cohortDrop.value = 'all';
+
+            if (type === 'current') areaDrop.classList.remove('hidden');
+            if (type === 'newco') cohortDrop.classList.remove('hidden');
+
+            renderDashboard();
+        }
+
+        function populateCohortDropdown() {
+            // Find all unique cohorts from logs
+            const cohorts = [...new Set(rawLogs.filter(l => l.cohort).map(l => l.cohort))].sort();
+            const drop = document.getElementById('filter-cohort');
+            
+            drop.innerHTML = '<option value="all">ทุกรุ่น (Cohort)</option>';
+            cohorts.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = `รุ่น ${c}`;
+                drop.appendChild(opt);
+            });
+        }
+
+        /* ================================================
+           MAIN RENDER PIPELINE
+           ================================================ */
+        function renderDashboard() {
+            // 1. Calculate Top Stats
+            renderTopStats();
+
+            // 2. Filter questions based on examType filter
+            const examFilter = document.getElementById('filter-exam').value;
+            let activeQuestions = rawQuestions;
+            if (examFilter !== 'all') {
+                activeQuestions = rawQuestions.filter(q => q.examType === examFilter);
+            }
+
+            // 3. Filter Logs based on current filters
+            const filteredLogs = getFilteredLogs();
+
+            // 4. Calculate and sort Kill Rates
+            const killData = activeQuestions.map(q => {
+                const qLogs = filteredLogs.filter(l => l.questionId === q.id);
+                const stats = calculateKillRate(qLogs);
+                
+                // Also calculate sub-stats for the breakdown
+                const hqLogs = qLogs.filter(l => l.playerType === 'hq');
+                const currLogs = qLogs.filter(l => l.playerType === 'current');
+                const newcoLogs = qLogs.filter(l => l.playerType === 'newco');
+
+                return {
+                    question: q,
+                    totalLogs: qLogs.length,
+                    stats: stats,
+                    hqStats: calculateKillRate(hqLogs),
+                    currStats: calculateKillRate(currLogs),
+                    newcoStats: calculateKillRate(newcoLogs)
+                };
+            }).filter(item => item.totalLogs > 0); // Only show questions that have been attempted
+
+            // Sort by highest kill rate first, then by total attempts
+            killData.sort((a, b) => b.stats.rate - a.stats.rate || b.totalLogs - a.totalLogs);
+
+            // Phase 4: Save globally for Excel Export
+            currentKillData = killData;
+
+            // 5. Render the UI
+            drawKillBoard(killData);
+        }
+
+        function getFilteredLogs() {
+            const typeFilter = document.getElementById('filter-type').value;
+            const areaFilter = document.getElementById('filter-area').value;
+            const cohortFilter = document.getElementById('filter-cohort').value;
+
+            let logs = rawLogs;
+
+            if (typeFilter !== 'all') {
+                logs = logs.filter(l => l.playerType === typeFilter);
+            }
+            if (areaFilter !== 'all') {
+                logs = logs.filter(l => l.area === areaFilter);
+            }
+            if (cohortFilter !== 'all') {
+                logs = logs.filter(l => l.cohort === cohortFilter);
+            }
+
+            return logs;
+        }
+
+        /* ================================================
+           MATH ENGINE
+           ================================================ */
+        function renderTopStats() {
+            // Stats always show the unfiltered totals to give perspective
+            const uniqueIds = [...new Set(rawLogs.map(l => l.playerId))];
+            
+            let hqCount = 0, currCount = 0, newcoCount = 0;
+            uniqueIds.forEach(id => {
+                const playerLogs = rawLogs.filter(l => l.playerId === id);
+                if (playerLogs.length === 0) return;
+                
+                // Assume player type based on their most recent log
+                const type = playerLogs[playerLogs.length - 1].playerType;
+                if (type === 'hq') hqCount++;
+                if (type === 'current') currCount++;
+                if (type === 'newco') newcoCount++;
+            });
+
+            document.getElementById('stat-total').textContent = uniqueIds.length;
+            document.getElementById('stat-attempts').textContent = `จากการตอบทั้งหมด ${rawLogs.length} ครั้ง`;
+            document.getElementById('stat-hq').textContent = hqCount;
+            document.getElementById('stat-current').textContent = currCount;
+            document.getElementById('stat-newco').textContent = newcoCount;
+        }
+
+        function calculateKillRate(logs) {
+            if (!logs || logs.length === 0) return { wrong: 0, total: 0, rate: 0 };
+            
+            const method = document.getElementById('calc-method').value;
+
+            if (method === 'attempts') {
+                // Method A: Raw attempts
+                const wrong = logs.filter(l => !l.isCorrect).length;
+                return { wrong, total: logs.length, rate: wrong / logs.length };
+            } else {
+                // Method B: Unique Players
+                const uniquePlayers = [...new Set(logs.map(l => l.playerId))];
+                let wrongCount = 0;
+                
+                uniquePlayers.forEach(pid => {
+                    // If they got it wrong AT LEAST ONCE, they are counted as "killed" by this question
+                    const pLogs = logs.filter(l => l.playerId === pid);
+                    const hasFailed = pLogs.some(l => !l.isCorrect);
+                    if (hasFailed) wrongCount++;
+                });
+
+                return { wrong: wrongCount, total: uniquePlayers.length, rate: wrongCount / uniquePlayers.length };
+            }
+        }
+
+        /* ================================================
+           PHASE 4: EXCEL EXPORT
+           ================================================ */
+        function exportAnalyticsToExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert("⏳ กำลังโหลดไลบรารี Excel โปรดรอสักครู่แล้วกดอีกครั้ง...");
+                return;
+            }
+            if (currentKillData.length === 0 && rawLogs.length === 0) {
+                alert("❌ ไม่มีข้อมูลสำหรับ Export");
+                return;
+            }
+
+            // 1. Create Summary Sheet Data
+            const summaryData = currentKillData.map(item => ({
+                "ประเภท": item.question.examType === 'life' ? 'ชีวิต' : 'วินาศภัย',
+                "ด่าน": item.question.stageId,
+                "คำถาม": item.question.questionText,
+                "Kill Rate (%)": Math.round(item.stats.rate * 100) + '%',
+                "รวม ผิด/พยายามทั้งหมด": `${item.stats.wrong}/${item.stats.total}`,
+                "สนญ. ผิด/ทั้งหมด": `${item.hqStats.wrong}/${item.hqStats.total}`,
+                "ปัจจุบัน ผิด/ทั้งหมด": `${item.currStats.wrong}/${item.currStats.total}`,
+                "New CO ผิด/ทั้งหมด": `${item.newcoStats.wrong}/${item.newcoStats.total}`
+            }));
+
+            // 2. Create Raw Logs Sheet Data (respecting current filters)
+            const filteredLogs = getFilteredLogs();
+            const logsData = filteredLogs.map(l => {
+                const q = rawQuestions.find(q => q.id === l.questionId);
+                
+                let pType = 'ไม่ระบุ';
+                if (l.playerType === 'hq') pType = 'สำนักงานใหญ่';
+                else if (l.playerType === 'current') pType = 'พนักงานปัจจุบัน';
+                else if (l.playerType === 'newco') pType = 'New CO';
+
+                // Format timestamp beautifully
+                let dateStr = 'N/A';
+                if (l.timestamp && l.timestamp.seconds) {
+                    dateStr = new Date(l.timestamp.seconds * 1000).toLocaleString('th-TH');
+                }
+
+                return {
+                    "วัน/เวลา": dateStr,
+                    "รหัสพนักงาน": l.playerId,
+                    "กลุ่มพนักงาน": pType,
+                    "พื้นที่": l.area || '-',
+                    "รุ่น (Cohort)": l.cohort || '-',
+                    "เลขที่": l.memberNo || '-',
+                    "ประเภทข้อสอบ": l.examType === 'life' ? 'ชีวิต' : 'วินาศภัย',
+                    "ด่าน": l.stageId,
+                    "คำถาม": q ? q.questionText : '(คำถามถูกลบจากระบบ)',
+                    "ผลลัพธ์": l.isCorrect ? '✅ ตอบถูก' : '❌ ตอบผิด'
+                };
+            });
+
+            // 3. Generate Excel
+            const wb = XLSX.utils.book_new();
+            
+            const wsSummary = XLSX.utils.json_to_sheet(summaryData);
+            XLSX.utils.book_append_sheet(wb, wsSummary, "Kill Rate Summary");
+
+            if (logsData.length > 0) {
+                const wsLogs = XLSX.utils.json_to_sheet(logsData);
+                XLSX.utils.book_append_sheet(wb, wsLogs, "Raw Answer Logs");
+            }
+
+            XLSX.writeFile(wb, "haunted_insurance_analytics.xlsx");
+        }
+
+        /* ================================================
+           UI RENDERING
+           ================================================ */
+        function getColorClass(rate) {
+            if (rate <= 0.30) return 'fill-safe';
+            if (rate <= 0.60) return 'fill-moderate';
+            if (rate <= 0.80) return 'fill-high';
+            return 'fill-brutal';
+        }
+
+        function drawKillBoard(data) {
+            const board = document.getElementById('kill-board');
+            board.innerHTML = '';
+
+            if (data.length === 0) {
+                board.innerHTML = `<div class="empty-dashboard"><h2>ยังไม่มีข้อมูลการตอบคำถามที่ตรงกับเงื่อนไขนี้</h2></div>`;
+                return;
+            }
+
+            data.forEach((item, index) => {
+                const q = item.question;
+                const stats = item.stats;
+                const pct = Math.round(stats.rate * 100);
+                const colorClass = getColorClass(stats.rate);
+                
+                // Boss tier logic
+                const isBoss = stats.rate > 0.80 && stats.total >= 3; 
+                let bossBadge = '';
+                if (isBoss) bossBadge = `<span style="color:var(--error); font-weight:bold; font-size:12px; margin-left:10px;">💀 BOSS TIER</span>`;
+
+                const typeLabel = q.examType === 'life' ? '💙 ชีวิต' : '🤍 วินาศภัย';
+                
+                const card = document.createElement('div');
+                card.className = `kr-card ${isBoss ? 'boss-tier' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="kr-header">
+                        <div class="kr-question">
+                            <span style="color:var(--text-muted); font-size:12px; margin-right:8px;">#${index + 1}</span> 
+                            ${q.questionText}
+                            ${bossBadge}
+                        </div>
+                        <div class="q-stage-chip kr-stage-chip">${typeLabel} │ ด่าน ${q.stageId}</div>
+                    </div>
+
+                    <!-- Main Progress Bar -->
+                    <div class="bar-wrap">
+                        <div class="bar-label-row">
+                            <span class="bar-title">💀 Overall Kill Rate</span>
+                            <span class="bar-stats">${pct}% (${stats.wrong}/${stats.total})</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill ${colorClass}" style="width: ${pct}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown Sub-bars -->
+                    <div class="kr-breakdown">
+                        ${buildSubBar('🏢 สนญ.', item.hqStats)}
+                        ${buildSubBar('👤 ปัจจุบัน', item.currStats)}
+                        ${buildSubBar('🆕 New CO', item.newcoStats)}
+                    </div>
+                `;
+
+                board.appendChild(card);
+
+                // Small delay to trigger CSS width transition
+                setTimeout(() => {
+                    card.querySelectorAll('.bar-fill').forEach(el => {
+                        el.style.width = el.getAttribute('data-target-width') || el.style.width;
+                    });
+                }, 50);
+            });
+        }
+
+        function buildSubBar(label, stats) {
+            if (stats.total === 0) return `<div class="sub-bar-col"><span class="sub-bar-title">${label}</span><span class="sub-bar-text" style="color:var(--border-dark)">ไม่มีข้อมูล</span></div>`;
+            
+            const pct = Math.round(stats.rate * 100);
+            const colorClass = getColorClass(stats.rate);
+
+            return `
+                <div class="sub-bar-col">
+                    <span class="sub-bar-title">${label}</span>
+                    <div class="sub-bar-track">
+                        <div class="bar-fill ${colorClass}" style="width: 0%" data-target-width="${pct}%"></div>
+                    </div>
+                    <span class="sub-bar-text">${pct}% (${stats.wrong}/${stats.total})</span>
+                </div>
+            `;
+        }
+
+    </script>
+</body>
+</html>

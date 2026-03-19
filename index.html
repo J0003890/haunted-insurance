@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0f0e00" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>สำนักงานต้องสาป</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ================================================
+       SCREEN 1 — WELCOME
+       ================================================ -->
+  <div id="screen-welcome" class="screen active">
+
+    <div class="welcome-bg">
+      <div class="c-face c-ceiling"></div>
+      <div class="c-face c-floor"></div>
+      <div class="c-face c-wall-l"></div>
+      <div class="c-face c-wall-r"></div>
+      <div class="c-endwall">
+        <div class="exit-sign">EXIT</div>
+      </div>
+      <div class="c-tube c-tube-l"></div>
+      <div class="c-tube c-tube-r"></div>
+      <div class="corridor-vignette"></div>
+    </div>
+
+    <div class="screen-content">
+      <div class="title-block">
+        <div class="skull-icon">☠</div>
+        <h1 class="game-title flicker">สำนักงานต้องสาป</h1>
+        <p class="game-tagline">ที่นี่... ผู้ตายยังต้องสอบ</p>
+      </div>
+      <div class="welcome-text-box">
+        <p>ยินดีต้อนรับสู่โลกหลังความตาย</p>
+        <p>คุณเพิ่งตาย</p>
+        <p>แต่ประตูสวรรค์ยังไม่เปิด</p>
+        <p>มีเพียงหนึ่งทางออก —</p>
+        <p class="welcome-emphasis">สอบให้ผ่าน</p>
+      </div>
+      <button class="btn-main" onclick="showScreen('screen-player-type')">
+        เข้าสู่สำนักงาน...
+      </button>
+      <a href="admin.html" class="admin-cat-btn" title="">🐱</a>
+    </div>
+    <p class="credit-text">developed by NTB's L&D 2026</p>
+
+  </div>
+
+
+  <!-- ================================================
+       SCREEN 2 — WHO ARE YOU? (3 doors)
+       ================================================ -->
+  <div id="screen-player-type" class="screen">
+    <div class="screen-content">
+
+      <h2 class="screen-title">คุณเป็นใคร?</h2>
+      <p class="screen-subtitle">เลือกประตูที่ตรงกับตัวคุณ</p>
+
+      <div class="player-type-door-row">
+
+        <div class="player-type-door" onclick="selectPlayerType('hq')">
+          <div class="exam-door-frame">
+            <div class="exam-door-body">
+              <div class="exam-door-panel-top"></div>
+              <div class="exam-door-panel-bottom"></div>
+              <div class="exam-door-knob-wrap">
+                <div class="exam-door-knob"></div>
+              </div>
+            </div>
+          </div>
+          <div class="exam-door-label-box">
+            <p class="exam-door-label-main">สำนักงานใหญ่</p>
+            <p class="exam-door-label-sub">🏢 HQ</p>
+          </div>
+        </div>
+
+        <div class="player-type-door" onclick="selectPlayerType('current')">
+          <div class="exam-door-frame">
+            <div class="exam-door-body">
+              <div class="exam-door-panel-top"></div>
+              <div class="exam-door-panel-bottom"></div>
+              <div class="exam-door-knob-wrap right-knob">
+                <div class="exam-door-knob"></div>
+              </div>
+            </div>
+          </div>
+          <div class="exam-door-label-box">
+            <p class="exam-door-label-main">พนักงานปัจจุบัน</p>
+            <p class="exam-door-label-sub">👤 ภาคสนาม</p>
+          </div>
+        </div>
+
+        <div class="player-type-door" onclick="selectPlayerType('newco')">
+          <div class="exam-door-frame">
+            <div class="exam-door-body">
+              <div class="exam-door-panel-top"></div>
+              <div class="exam-door-panel-bottom"></div>
+              <div class="exam-door-knob-wrap">
+                <div class="exam-door-knob"></div>
+              </div>
+            </div>
+          </div>
+          <div class="exam-door-label-box">
+            <p class="exam-door-label-main">New CO</p>
+            <p class="exam-door-label-sub">🆕 ผู้แทนใหม่</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================================================
+       SCREEN 2A — HQ: EMPLOYEE ID
+       ================================================ -->
+  <div id="screen-hq-id" class="screen">
+    <div class="screen-content">
+
+      <h2 class="screen-title">สำนักงานใหญ่</h2>
+      <p class="screen-subtitle">🏢 กรุณาระบุหมายเลขพนักงาน</p>
+
+      <div class="id-input-box">
+        <p class="id-input-label">หมายเลขประจำตัวพนักงาน</p>
+        <input
+          type="text"
+          id="hq-id-input"
+          class="pixel-input"
+          placeholder="00000000"
+          maxlength="8"
+          inputmode="numeric"
+          autocomplete="off"
+        />
+        <p class="id-input-hint">ตัวเลข 8 หลัก (เช่น 00003890)</p>
+        <p id="hq-id-error" class="input-error hidden">
+          ⚠️ หมายเลขไม่ถูกต้อง — กรุณาระบุตัวเลข 8 หลัก
+        </p>
+      </div>
+
+      <button class="btn-main" onclick="confirmHQId()">
+        ยืนยัน — เข้าสู่ความมืด
+      </button>
+      <button class="btn-ghost" onclick="showScreen('screen-player-type')">
+        ← ย้อนกลับ
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- ================================================
+       SCREEN 2B-1 — CURRENT EMPLOYEE: SELECT AREA
+       ================================================ -->
+  <div id="screen-current-area" class="screen">
+    <div class="screen-content screen-content--top">
+
+      <h2 class="screen-title">พนักงานปัจจุบัน</h2>
+      <p class="screen-subtitle">กรุณาเลือกพื้นที่ของคุณ</p>
+
+      <div class="area-list">
+        <div class="area-item" onclick="selectArea('กรุงเทพฯ-ปริมณฑลตะวันออก')">
+          <p class="area-item-name">🏙️ กรุงเทพฯ-ปริมณฑลตะวันออก</p>
+        </div>
+        <div class="area-item" onclick="selectArea('กรุงเทพฯ-ปริมณฑลตะวันตก')">
+          <p class="area-item-name">🏙️ กรุงเทพฯ-ปริมณฑลตะวันตก</p>
+        </div>
+        <div class="area-item" onclick="selectArea('ภาคกลาง')">
+          <p class="area-item-name">🌾 ภาคกลาง</p>
+        </div>
+        <div class="area-item" onclick="selectArea('ภาคตะวันออก')">
+          <p class="area-item-name">🌊 ภาคตะวันออก</p>
+        </div>
+        <div class="area-item" onclick="selectArea('ภาคตะวันออกเฉียงเหนือตอนบน')">
+          <p class="area-item-name">🌿 ภาคตะวันออกเฉียงเหนือตอนบน</p>
+        </div>
+        <div class="area-item" onclick="selectArea('ภาคตะวันออกเฉียงเหนือตอนล่าง')">
+          <p class="area-item-name">🌿 ภาคตะวันออกเฉียงเหนือตอนล่าง</p>
+        </div>
+        <div class="area-item" onclick="selectArea('ภาคใต้')">
+          <p class="area-item-name">🏖️ ภาคใต้</p>
+        </div>
+      </div>
+
+      <button class="btn-ghost" onclick="showScreen('screen-player-type')">
+        ← ย้อนกลับ
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- ================================================
+       SCREEN 2B-2 — CURRENT EMPLOYEE: EMPLOYEE ID
+       ================================================ -->
+  <div id="screen-current-id" class="screen">
+    <div class="screen-content">
+
+      <h2 class="screen-title">พนักงานปัจจุบัน</h2>
+      <p id="current-area-display" class="screen-subtitle">พื้นที่: —</p>
+
+      <div class="id-input-box">
+        <p class="id-input-label">หมายเลขประจำตัวพนักงาน</p>
+        <input
+          type="text"
+          id="current-id-input"
+          class="pixel-input"
+          placeholder="00000000"
+          maxlength="8"
+          inputmode="numeric"
+          autocomplete="off"
+        />
+        <p class="id-input-hint">ตัวเลข 8 หลัก (เช่น 00003890)</p>
+        <p id="current-id-error" class="input-error hidden">
+          ⚠️ หมายเลขไม่ถูกต้อง — กรุณาระบุตัวเลข 8 หลัก
+        </p>
+      </div>
+
+      <button class="btn-main" onclick="confirmCurrentId()">
+        ยืนยัน — เข้าสู่ความมืด
+      </button>
+      <button class="btn-ghost" onclick="showScreen('screen-current-area')">
+        ← ย้อนกลับ
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- ================================================
+       SCREEN 2C — NEW CO: รุ่น + เลขที่
+       ================================================ -->
+  <div id="screen-newco-id" class="screen">
+    <div class="screen-content">
+
+      <h2 class="screen-title">New CO</h2>
+      <p class="screen-subtitle">🆕 กรุณาระบุรหัสของคุณ</p>
+
+      <div class="id-input-box">
+        <p class="id-input-label">กรุณาระบุ รุ่น และ เลขที่ ของคุณ</p>
+
+        <div class="newco-inputs">
+          <div class="newco-input-group">
+            <p class="newco-input-label">รุ่น</p>
+            <input
+              type="text"
+              id="newco-cohort-input"
+              class="pixel-input"
+              placeholder="000"
+              maxlength="3"
+              inputmode="numeric"
+              autocomplete="off"
+            />
+            <p class="id-input-hint">3 หลัก</p>
+          </div>
+
+          <div class="newco-divider">—</div>
+
+          <div class="newco-input-group">
+            <p class="newco-input-label">เลขที่</p>
+            <input
+              type="text"
+              id="newco-member-input"
+              class="pixel-input"
+              placeholder="00"
+              maxlength="2"
+              inputmode="numeric"
+              autocomplete="off"
+            />
+            <p class="id-input-hint">2 หลัก</p>
+          </div>
+        </div>
+
+        <p id="newco-error" class="input-error hidden">
+          ⚠️ กรุณากรอกรุ่น 3 หลัก และเลขที่ 2 หลัก
+        </p>
+      </div>
+
+      <button class="btn-main" onclick="confirmNewCO()">
+        ยืนยัน — เข้าสู่ความมืด
+      </button>
+      <button class="btn-ghost" onclick="showScreen('screen-player-type')">
+        ← ย้อนกลับ
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- ================================================
+       SCREEN 3 — CHOOSE EXAM TYPE
+       ================================================ -->
+  <div id="screen-choose-exam" class="screen">
+    <div class="screen-content">
+
+      <h2 class="screen-title">ก่อนอื่น — โปรดเลือกเส้นทางของคุณ</h2>
+      <p class="screen-subtitle">แต่ละเส้นทางมีความมืดที่แตกต่างกัน</p>
+
+      <div class="exam-door-row">
+
+        <div class="exam-door" id="door-exam-life" onclick="selectExam('life')">
+          <div class="exam-door-frame">
+            <div class="exam-door-body">
+              <div class="exam-door-panel-top"></div>
+              <div class="exam-door-panel-bottom"></div>
+              <div class="exam-door-knob-wrap">
+                <div class="exam-door-knob"></div>
+              </div>
+            </div>
+          </div>
+          <div class="exam-door-label-box">
+            <p class="exam-door-label-main">ประกันชีวิต</p>
+            <p class="exam-door-label-sub">💙 4 ด่าน │ 40 ข้อ</p>
+          </div>
+        </div>
+
+        <div class="exam-door" id="door-exam-nonlife" onclick="selectExam('nonlife')">
+          <div class="exam-door-frame">
+            <div class="exam-door-body">
+              <div class="exam-door-panel-top"></div>
+              <div class="exam-door-panel-bottom"></div>
+              <div class="exam-door-knob-wrap right-knob">
+                <div class="exam-door-knob"></div>
+              </div>
+            </div>
+          </div>
+          <div class="exam-door-label-box">
+            <p class="exam-door-label-main">ประกันวินาศภัย</p>
+            <p class="exam-door-label-sub">🤍 8 ด่าน │ 55 ข้อ</p>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="btn-ghost" onclick="goBackFromExamChoice()">
+        ← ย้อนกลับ
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- ================================================
+       SCREEN 3.5 — CONTINUE PROMPT
+       ================================================ -->
+  <div id="screen-continue" class="screen">
+    <div class="screen-content screen-content--top">
+
+      <div class="result-card continue-card">
+
+        <div class="result-card-header">
+          <p class="result-game-name">💾 พบข้อมูลที่บันทึกไว้</p>
+          <p id="continue-player-id"  class="result-player-id">ผู้เตรียมสอบหมายเลข 00000000</p>
+          <p id="continue-path-label" class="result-path-label">เส้นทาง: —</p>
+          <p id="continue-saved-time" class="continue-saved-time">💾 บันทึกไว้เมื่อ —</p>
+        </div>
+
+        <div class="result-divider"></div>
+        <div id="continue-stage-rows" class="result-rows"></div>
+        <div class="result-divider"></div>
+
+        <div class="result-total-row">
+          <p id="continue-total" class="result-total-text">🏆 คะแนนสะสม: 0 คะแนน</p>
+        </div>
+
+        <div class="result-divider"></div>
+
+        <div class="continue-question-box">
+          <p class="continue-question-text">คุณต้องการดำเนินต่อจากที่ค้างไว้</p>
+          <p class="continue-question-text">หรือเริ่มใหม่ตั้งแต่ต้น?</p>
+        </div>
+
+      </div>
+
+      <button class="btn-main" onclick="continueFromSave()">
+        ▶ ดำเนินต่อจากที่ค้างไว้
+      </button>
+      <button class="btn-ghost btn-ghost--danger" onclick="restartFresh()">
+        🔄 เริ่มใหม่ตั้งแต่ต้น
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- ================================================
+       SCREEN 4 — STAGE SELECT MAP
+       ================================================ -->
+  <div id="screen-stage-select" class="screen">
+    <div class="screen-content screen-content--top">
+
+      <div class="player-info-bar">
+        <span id="stage-select-player-id" class="player-id-tag">ผู้เตรียมสอบหมายเลข 00000000</span>
+        <span id="stage-select-path"      class="player-path-tag">เส้นทาง: —</span>
+      </div>
+
+      <h2 class="screen-title">แผนที่สำนักงานต้องสาป</h2>
+      <p class="screen-subtitle">เลือกห้องที่คุณจะเข้าไปเผชิญ</p>
+
+      <div id="stage-list" class="stage-list"></div>
+
+    </div>
+  </div>
+
+
+  <!-- ================================================
+       SCREEN 5 — QUESTION SCREEN (CORRIDOR)
+       ================================================ -->
+  <div id="screen-question" class="screen">
+
+    <div class="q-hud">
+      <div class="q-topbar">
+        <span id="q-player-id"     class="q-id-text">00000000</span>
+        <span id="q-stage-name"    class="q-stage-text">ด่านที่ 1</span>
+        <span id="q-progress-text" class="q-prog-text">1/10</span>
+        <button class="mute-btn" id="mute-btn" onclick="toggleAudio()">🔊</button>
+      </div>
+      <div class="progress-track">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="corridor-scene" id="corridor-scene">
+
+      <div class="c-face c-ceiling"></div>
+      <div class="c-face c-floor"></div>
+      <div class="c-face c-wall-l"></div>
+      <div class="c-face c-wall-r"></div>
+
+      <div class="c-endwall">
+        <div class="exit-sign">EXIT</div>
+      </div>
+
+      <div class="c-tube c-tube-l"></div>
+      <div class="c-tube c-tube-r"></div>
+      <div class="c-pink-glow"></div>
+
+      <div class="c-q-box">
+        <div id="question-rarity-badge" class="question-rarity-badge"></div>
+        <p id="question-text" class="question-text">กำลังโหลด...</p>
+      </div>
+
+      <div class="c-door c-door-l" id="choice-left" onclick="selectAnswer('left')">
+        <div class="c-door-frame-wrap">
+          <div class="c-door-surface">
+            <div class="c-door-panel c-dp-top"></div>
+            <div class="c-door-crossbar"></div>
+            <div class="c-door-panel c-dp-bot"></div>
+          </div>
+          <div class="c-door-knob c-knob-right"></div>
+        </div>
+        <div class="c-door-info">
+          <p class="c-door-label">◀ ประตูซ้าย</p>
+          <p id="option-left" class="c-door-answer">—</p>
+        </div>
+      </div>
+
+      <div class="c-door c-door-r" id="choice-right" onclick="selectAnswer('right')">
+        <div class="c-door-frame-wrap">
+          <div class="c-door-surface">
+            <div class="c-door-panel c-dp-top"></div>
+            <div class="c-door-crossbar"></div>
+            <div class="c-door-panel c-dp-bot"></div>
+          </div>
+          <div class="c-door-knob c-knob-left"></div>
+        </div>
+        <div class="c-door-info">
+          <p class="c-door-label">ประตูขวา ▶</p>
+          <p id="option-right" class="c-door-answer">—</p>
+        </div>
+      </div>
+
+    </div><!-- end #corridor-scene -->
+
+  </div><!-- end #screen-question -->
+
+
+  <!-- ================================================
+       SCREEN 6 — ANSWER FEEDBACK
+       ================================================ -->
+  <div id="screen-feedback" class="screen">
+
+    <div class="feedback-corridor" id="feedback-corridor">
+      <div class="c-face c-ceiling"></div>
+      <div class="c-face c-floor"></div>
+      <div class="c-face c-wall-l"></div>
+      <div class="c-face c-wall-r"></div>
+      <div class="c-endwall">
+        <div class="exit-sign">EXIT</div>
+      </div>
+      <div class="c-tube c-tube-l"></div>
+      <div class="c-tube c-tube-r"></div>
+      <div class="corridor-vignette"></div>
+    </div>
+
+    <div class="feedback-content">
+
+      <div id="feedback-banner" class="feedback-banner">
+        <p id="feedback-icon"    class="feedback-icon-text">✅</p>
+        <p id="feedback-verdict" class="feedback-verdict">ถูกต้อง!</p>
+        <p id="feedback-flavor"  class="feedback-flavor-text">ประตูเปิดออก...</p>
+        <p id="feedback-rarity"  class="feedback-rarity-line"></p>
+      </div>
+
+      <div class="explanation-card">
+        <p class="explanation-header">💡 คำอธิบาย</p>
+        <p id="feedback-explanation" class="explanation-body">—</p>
+      </div>
+
+      <p id="feedback-running-score" class="running-score-text">คะแนนสะสมด่านนี้: 0 คะแนน</p>
+
+      <button class="btn-main" onclick="nextQuestion()">ต่อไป →</button>
+
+    </div>
+
+  </div>
+
+
+  <!-- ================================================
+       SCREEN 7 — STAGE SUMMARY
+       ================================================ -->
+  <div id="screen-summary" class="screen">
+    <div class="screen-content screen-content--top">
+
+      <div id="summary-card" class="result-card">
+        <div class="result-card-header">
+          <p class="result-game-name">💀 สำนักงานต้องสาป</p>
+          <p id="summary-player-id"  class="result-player-id">ผู้เตรียมสอบหมายเลข 00000000</p>
+          <p id="summary-path-label" class="result-path-label">เส้นทาง: —</p>
+        </div>
+        <div class="result-divider"></div>
+        <div id="summary-stage-rows" class="result-rows"></div>
+        <div class="result-divider"></div>
+        <div class="result-total-row">
+          <p id="summary-total" class="result-total-text">🏆 คะแนนรวมสะสม: 0 คะแนน</p>
+        </div>
+      </div>
+
+      <button class="btn-main" onclick="goToStageSelect()">🗺️ เลือกด่านต่อไป</button>
+
+    </div>
+  </div>
+
+
+  <!-- ================================================
+       SCREEN 8 — STAGE 1 FAIL
+       ================================================ -->
+  <div id="screen-fail" class="screen">
+    <div class="screen-content">
+
+      <div class="result-card fail-theme">
+        <div class="result-card-header">
+          <p class="result-game-name">💀 สำนักงานต้องสาป</p>
+          <p id="fail-player-id" class="result-player-id">ผู้เตรียมสอบหมายเลข 00000000</p>
+        </div>
+        <div class="result-divider"></div>
+        <div class="fail-body">
+          <p id="fail-stage-label"  class="fail-stage-text">ด่านที่ 1 จรรยาบรรณ</p>
+          <p id="fail-score-detail" class="fail-score-text">✅ ถูก 0  ❌ ผิด 0  │  0 / 20 คะแนน</p>
+          <div class="result-divider"></div>
+          <p class="fail-warn-text">⚠️ ไม่ผ่านเกณฑ์จรรยาบรรณ</p>
+          <p class="fail-threshold-text">ต้องได้อย่างน้อย 7/10 (14 คะแนน)</p>
+          <p class="fail-flavor-text">"วิญญาณของคุณยังไม่บริสุทธิ์พอ..."</p>
+          <p class="fail-flavor-text">"ทางเดินยังคงปิดอยู่"</p>
+        </div>
+      </div>
+
+      <button class="btn-main btn-danger" onclick="retryStageOne()">
+        🔄 ลองจรรยาบรรณอีกครั้ง
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- ================================================
+       SCREEN 9 — ALL STAGES COMPLETE
+       ================================================ -->
+  <div id="screen-all-complete" class="screen">
+    <div class="screen-content">
+
+      <div class="result-card complete-theme">
+        <div class="complete-body">
+          <p class="complete-trophy">🏆</p>
+          <h2 class="complete-title flicker">คุณผ่านแล้ว</h2>
+          <p class="complete-flavor-text">"ประตูสวรรค์เปิดออกแล้ว..."</p>
+          <p class="complete-flavor-text">"สำนักงานต้องสาปปล่อยวิญญาณของคุณไป"</p>
+          <div class="result-divider"></div>
+          <p id="complete-total-score" class="complete-score-text">คะแนนรวมทั้งหมด: 0 / 0 คะแนน</p>
+          <p id="complete-player-id"   class="result-player-id">ผู้เตรียมสอบหมายเลข 00000000</p>
+        </div>
+      </div>
+
+      <button class="btn-main" onclick="resetGame()">🔄 เริ่มใหม่อีกครั้ง</button>
+
+    </div>
+  </div>
+
+
+  <!-- ✅ Firebase SDK FIRST -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <!-- Game files — load AFTER Firebase -->
+  <script src="js/config.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/logger.js"></script>
+  <script src="js/game.js"></script>
+
+</body>
+</html>
