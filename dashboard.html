@@ -7,299 +7,144 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet" />
-    
-    <!-- We will leverage your existing admin.css for the baseline theme (colors, header, etc.) -->
     <link rel="stylesheet" href="css/admin.css" />
 
-    <!-- Specific Dashboard Styles -->
     <style>
-        .dashboard-main {
-            padding: 20px 24px 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* Overview Cards */
-        .overview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
-        }
-
-        .overview-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 18px 20px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .overview-value {
-            font-family: 'Press Start 2P', monospace;
-            font-size: 24px;
-            color: var(--pink);
-            margin: 10px 0;
-        }
-
-        .overview-label {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-muted);
-        }
-
-        /* Filter Section */
-        .dashboard-filters {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px 20px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            box-shadow: var(--shadow);
-            align-items: center;
-        }
-
-        .calc-toggle {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--surface-2);
-            padding: 6px 12px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-        }
-
-        .calc-toggle select {
-            font-family: 'Sarabun', sans-serif;
-            border: none;
-            background: transparent;
-            font-weight: 600;
-            color: var(--pink);
-            outline: none;
-            cursor: pointer;
-        }
-
-        /* Question Kill Rate Cards */
-        .kill-board {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .kr-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 18px 22px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .kr-card.boss-tier {
-            border-color: var(--error);
-            box-shadow: 0 0 12px rgba(220, 38, 38, 0.15);
-        }
-
-        .kr-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-            gap: 20px;
-        }
-
-        .kr-question {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        .kr-stage-chip {
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        /* Progress Bar Styles */
-        .bar-wrap {
-            margin-bottom: 12px;
-        }
-
-        .bar-label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 6px;
-        }
-
-        .bar-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .bar-stats {
-            font-family: 'Press Start 2P', monospace;
-            font-size: 10px;
-            color: var(--text);
-        }
-
-        .bar-track {
-            width: 100%;
-            height: 14px;
-            background: var(--surface-2);
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
-        .bar-fill {
-            height: 100%;
-            width: 0%;
-            transition: width 0.8s ease-out;
-        }
-
-        /* Color Coding based on Kill Rate */
-        .fill-safe     { background: #16a34a; } /* 0-30% */
-        .fill-moderate { background: #d97706; } /* 31-60% */
-        .fill-high     { background: var(--pink); box-shadow: 0 0 8px var(--pink-glow); } /* 61-80% */
-        .fill-brutal   { background: var(--error); box-shadow: 0 0 12px rgba(220,38,38,0.5); } /* 81-100% */
-
-        /* Sub-bars (Breakdown) */
-        .kr-breakdown {
-            display: flex;
-            gap: 24px;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px dashed var(--border);
-        }
-
-        .sub-bar-col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .sub-bar-title {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .sub-bar-track {
-            width: 100%;
-            height: 6px;
-            background: var(--surface-2);
-            border-radius: 3px;
-            overflow: hidden;
-        }
+        .dashboard-main { padding: 20px 24px 40px; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .overview-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; text-align: center; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 6px; position: relative; overflow: hidden; }
+        .overview-value { font-family: 'Press Start 2P', monospace; font-size: 24px; color: var(--pink); margin: 10px 0; }
+        .overview-label { font-size: 14px; font-weight: 700; color: var(--text-muted); }
         
-        .sub-bar-text {
-            font-family: 'Press Start 2P', monospace;
-            font-size: 7px;
-            color: var(--text-muted);
-            margin-top: 2px;
-            text-align: right;
-        }
+        .dashboard-filters { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; display: flex; gap: 12px; flex-wrap: wrap; box-shadow: var(--shadow); align-items: center; }
+        
+        .chart-container { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); width: 100%; height: 350px; display: none; }
+        .chart-container.active { display: block; }
 
-        /* Empty State */
-        .empty-dashboard {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-muted);
-            background: var(--surface);
-            border-radius: var(--radius);
-            border: 1px dashed var(--border-dark);
+        .kill-board { display: flex; flex-direction: column; gap: 12px; }
+        .kr-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 22px; box-shadow: var(--shadow); position: relative; overflow: hidden; transition: all 0.2s; }
+        .kr-card.boss-tier { border-color: var(--error); box-shadow: 0 0 12px rgba(220, 38, 38, 0.15); }
+        
+        .kr-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 20px; }
+        .kr-question { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.6; }
+        .kr-stage-chip { white-space: nowrap; flex-shrink: 0; }
+        
+        .bar-wrap { margin-bottom: 12px; }
+        .bar-label-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; }
+        .bar-title { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .bar-stats { font-family: 'Press Start 2P', monospace; font-size: 10px; color: var(--text); }
+        .bar-track { width: 100%; height: 14px; background: var(--surface-2); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+        .bar-fill { height: 100%; width: 0%; transition: width 0.8s ease-out; }
+        
+        .fill-safe { background: #16a34a; } 
+        .fill-moderate { background: #d97706; } 
+        .fill-high { background: var(--pink); box-shadow: 0 0 8px var(--pink-glow); } 
+        .fill-brutal { background: var(--error); box-shadow: 0 0 12px rgba(220,38,38,0.5); } 
+
+        .kr-breakdown { display: flex; gap: 24px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+        .sub-bar-col { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .sub-bar-title { font-size: 11px; color: var(--text-muted); }
+        .sub-bar-track { width: 100%; height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+        .sub-bar-text { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-muted); margin-top: 2px; text-align: right; }
+
+        .kr-options-toggle { margin-top: 12px; font-size: 12px; color: var(--pink); background: none; border: 1px dashed var(--pink); padding: 4px 10px; border-radius: 4px; cursor: pointer; transition: all 0.2s; width: 100%; font-family: 'Sarabun', sans-serif;}
+        .kr-options-toggle:hover { background: var(--pink-light); }
+        .kr-options-panel { margin-top: 12px; display: none; gap: 12px; padding: 12px; background: var(--surface-2); border-radius: 6px; border: 1px solid var(--border); }
+        .kr-options-panel.active { display: flex; }
+        .opt-door { flex: 1; padding: 10px; border-radius: 4px; border: 1px solid var(--border); font-size: 13px; text-align: center; display: flex; flex-direction: column; gap: 6px;}
+        .opt-door.is-correct { border-color: var(--correct); background: var(--correct-bg); color: var(--correct); }
+        .opt-door.is-wrong { border-color: var(--error); background: var(--error-bg); color: var(--error); }
+        .opt-stats { font-family: 'Press Start 2P', monospace; font-size: 9px; margin-top: 4px; }
+
+        .empty-dashboard { text-align: center; padding: 60px 20px; color: var(--text-muted); background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border-dark); }
+
+        #print-header { display: none; margin-bottom: 20px; border-bottom: 2px solid var(--pink); padding-bottom: 10px;}
+        @media print {
+            body { background: white !important; color: black !important; }
+            .admin-header, .dashboard-filters, .kr-options-toggle, .btn-secondary { display: none !important; }
+            #print-header { display: block; }
+            .dashboard-main { padding: 0; }
+            .overview-card, .kr-card, .chart-container { break-inside: avoid; border: 1px solid #ccc; box-shadow: none; }
+            .bar-track, .sub-bar-track { border: 1px solid #999; }
+            .bar-fill, .sub-bar-track > div { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
 
 <body>
-
-    <!-- PASSWORD GATE -->
+    <!-- GATE -->
     <div id="gate" class="gate-screen">
         <div class="gate-card">
             <p class="gate-game-name">💀 สำนักงานต้องสาป</p>
             <h1 class="gate-title">📊 Analytics Dashboard</h1>
-            <p class="gate-subtitle">เฉพาะผู้ดูแลระบบเท่านั้น</p>
-            <input type="password" id="gate-input" class="gate-input" placeholder="รหัสผ่าน"
-                onkeydown="if(event.key==='Enter') checkPassword()" autofocus />
+            <input type="password" id="gate-input" class="gate-input" placeholder="รหัสผ่าน" onkeydown="if(event.key==='Enter') checkPassword()" autofocus />
             <p id="gate-error" class="gate-error hidden">❌ รหัสผ่านไม่ถูกต้อง</p>
             <button class="btn-primary" onclick="checkPassword()">เข้าสู่ระบบ</button>
         </div>
     </div>
 
-
     <!-- MAIN DASHBOARD -->
     <div id="dashboard-panel" class="hidden">
-
-        <!-- HEADER -->
         <header class="admin-header">
             <div class="admin-header-left">
                 <h1 class="admin-title">📊 Analytics Dashboard — สำนักงานต้องสาป</h1>
-                <p class="header-stats">วิเคราะห์อัตราการรอดชีวิตของพนักงาน</p>
             </div>
             <div class="admin-header-right">
-                <a href="admin.html" class="btn-secondary" style="text-decoration: none;">⚙️ กลับไปที่ Admin Panel</a>
-                <!-- ★ PHASE 4: EXPORT BUTTON ★ -->
+                <a href="admin.html" class="btn-secondary" style="text-decoration: none;">⚙️ Admin Panel</a>
+                <button class="btn-secondary" onclick="window.print()" style="color: #d97706; border-color: #d97706;">🖨️ Save as PDF</button>
                 <button class="btn-secondary" onclick="exportAnalyticsToExcel()" style="color: #16a34a; border-color: #16a34a;">📥 Export Excel</button>
-                <button class="btn-secondary" onclick="loadDashboardData()">🔄 รีเฟรชข้อมูล</button>
-                <button class="btn-icon-toggle" id="dark-mode-btn" onclick="toggleDarkMode()" title="สลับ Dark/Light Mode">🌙</button>
+                
+                <!-- ★ CHANGED: Removed manual refresh, added Live indicator ★ -->
+                <span class="btn-secondary" style="border-color: #10b981; color: #10b981; cursor: default; background: transparent;">🟢 Live (Real-time)</span>
+                
+                <button class="btn-icon-toggle" id="dark-mode-btn" onclick="toggleDarkMode()">🌙</button>
                 <button class="btn-ghost-sm" onclick="logout()">ออกจากระบบ</button>
             </div>
         </header>
 
         <main class="dashboard-main">
+            <!-- PDF Only Header -->
+            <div id="print-header">
+                <h2>รายงานการวิเคราะห์การเรียนรู้ (L&D Analytics Report)</h2>
+                <p id="print-timestamp" style="font-size: 12px; color: #666;"></p>
+                <p id="print-filters" style="font-size: 14px; font-weight: bold; margin-top: 5px; color: var(--pink);"></p>
+            </div>
 
             <!-- OVERVIEW CARDS -->
             <div class="overview-grid">
-                <div class="overview-card">
-                    <p class="overview-label">👥 ผู้เข้าสอบทั้งหมด (Unique)</p>
-                    <h2 class="overview-value" id="stat-total">0</h2>
-                    <p class="header-stats" id="stat-attempts">จากการตอบทั้งหมด 0 ครั้ง</p>
-                </div>
-                <div class="overview-card">
-                    <p class="overview-label">🏢 สำนักงานใหญ่</p>
-                    <h2 class="overview-value" id="stat-hq">0</h2>
-                </div>
-                <div class="overview-card">
-                    <p class="overview-label">👤 พนักงานปัจจุบัน</p>
-                    <h2 class="overview-value" id="stat-current">0</h2>
-                </div>
-                <div class="overview-card">
-                    <p class="overview-label">🆕 New CO</p>
-                    <h2 class="overview-value" id="stat-newco">0</h2>
-                </div>
+                <div class="overview-card"><p class="overview-label">👥 ผู้เข้าสอบทั้งหมด</p><h2 class="overview-value" id="stat-total">0</h2><p class="header-stats" id="stat-attempts">จากการตอบทั้งหมด 0 ครั้ง</p></div>
+                <div class="overview-card"><p class="overview-label">🏢 สำนักงานใหญ่</p><h2 class="overview-value" id="stat-hq">0</h2></div>
+                <div class="overview-card"><p class="overview-label">👤 พนักงานปัจจุบัน</p><h2 class="overview-value" id="stat-current">0</h2></div>
+                <div class="overview-card"><p class="overview-label">🆕 New CO</p><h2 class="overview-value" id="stat-newco">0</h2></div>
+            </div>
+
+            <!-- EXECUTIVE INSIGHTS SECTION -->
+            <div id="stage-insights" class="overview-grid" style="display: none;"></div>
+
+            <!-- MACRO CHART SECTION -->
+            <div id="chart-wrapper" class="chart-container">
+                <canvas id="macroChart"></canvas>
             </div>
 
             <!-- FILTERS -->
             <div class="dashboard-filters">
-                <select id="filter-exam" class="filter-select" onchange="renderDashboard()">
-                    <option value="all">ทุกประเภทข้อสอบ</option>
+                <select id="filter-exam" class="filter-select" onchange="handleExamFilterChange()">
+                    <option value="all">ทุกประเภทประกัน</option>
                     <option value="life">💙 ประกันชีวิต</option>
                     <option value="nonlife">🤍 ประกันวินาศภัย</option>
                 </select>
 
+                <select id="filter-stage" class="filter-select hidden" onchange="renderDashboard()">
+                    <option value="all">ทุกด่าน (Topics)</option>
+                </select>
+
                 <select id="filter-type" class="filter-select" onchange="handleTypeFilterChange()">
-                    <option value="all">กลุ่มพนักงาน: ทั้งหมด</option>
+                    <option value="all">ผู้เล่น: ทั้งหมด</option>
                     <option value="hq">🏢 สำนักงานใหญ่</option>
                     <option value="current">👤 พนักงานปัจจุบัน</option>
                     <option value="newco">🆕 New CO</option>
                 </select>
 
-                <!-- Dynamic Sub-filters (Hidden by default) -->
                 <select id="filter-area" class="filter-select hidden" onchange="renderDashboard()">
                     <option value="all">ทุกพื้นที่</option>
                     <option value="กรุงเทพฯ-ปริมณฑลตะวันออก">กรุงเทพฯ-ปริมณฑลตะวันออก</option>
@@ -313,51 +158,55 @@
 
                 <select id="filter-cohort" class="filter-select hidden" onchange="renderDashboard()">
                     <option value="all">ทุกรุ่น (Cohort)</option>
-                    <!-- Populated dynamically -->
                 </select>
 
-                <div class="calc-toggle">
-                    <span class="overview-label">คำนวณจาก: </span>
-                    <select id="calc-method" onchange="renderDashboard()">
-                        <option value="attempts">จำนวนครั้งที่ตอบ (Total Attempts)</option>
-                        <option value="unique">จำนวนคน (Unique Players)</option>
-                    </select>
-                </div>
+                <select id="filter-member-type" class="filter-select hidden" onchange="renderDashboard()">
+                    <option value="all">ช่วงเวลา: ทั้งหมด</option>
+                    <option value="pre">ก่อนอบรม (เลขที่ 00)</option>
+                    <option value="post">ระหว่างอบรม (เลขที่ 01-99)</option>
+                </select>
+
+                <select id="filter-sort" class="filter-select" onchange="renderDashboard()" style="margin-left: auto; border-color: var(--pink); color: var(--pink); font-weight: bold;">
+                    <option value="rate">เรียงตาม: % Kill Rate (สูงสุด)</option>
+                    <option value="wrong">เรียงตาม: จำนวนคนตอบผิด (สูงสุด)</option>
+                    <option value="attempts">เรียงตาม: ถูกตอบบ่อยสุด (Frequency)</option>
+                </select>
             </div>
 
-            <!-- QUESTION KILL BOARD -->
-            <div id="kill-board" class="kill-board">
-                <div class="empty-dashboard">
-                    <h2>กำลังดึงข้อมูลวิญญาณ...</h2>
-                </div>
-            </div>
-
+            <!-- KILL BOARD -->
+            <div id="kill-board" class="kill-board"></div>
         </main>
     </div>
 
-    <!-- Firebase + Config -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <!-- ★ PHASE 4: SHEETJS EXCEL LIBRARY ★ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js Library -->
     <script src="js/config.js"></script>
 
-    <!-- Dashboard Logic -->
     <script>
         const ADMIN_PASSWORD = 'insurlearn2026';
         let rawQuestions = [];
         let rawLogs = [];
-        let currentKillData = []; // Phase 4: Store this globally for export
+        let currentKillData = []; 
+        let barChartInstance = null; 
+        
+        let questionsLoaded = false;
+        let logsLoaded = false;
+        
+        const STAGES = {
+            life: [ { id: 1, name: 'จรรยาบรรณประกันชีวิต', count: 10}, { id: 2, name: 'หลักการประกันชีวิต', count: 20}, { id: 3, name: 'ประมวลกฎหมายแพ่งชีวิต', count: 5}, { id: 4, name: 'พ.ร.บ. ชีวิต', count: 5} ],
+            nonlife: [ { id: 1, name: 'จรรยาบรรณประกันวินาศภัย', count: 10}, { id: 2, name: 'หลักการประกันวินาศภัย', count: 5}, { id: 3, name: 'ประมวลกฎหมายแพ่งวินาศภัย', count: 10}, { id: 4, name: 'พ.ร.บ. วินาศภัย', count: 10}, { id: 5, name: 'ประกันอัคคีภัย', count: 5}, { id: 6, name: 'ประกันตัวเรือและขนส่ง', count: 5}, { id: 7, name: 'ประกันภัยรถยนต์', count: 5}, { id: 8, name: 'ประกันภัยเบ็ดเตล็ด', count: 5} ]
+        };
 
-        /* ================================================
-           INIT & AUTH
-           ================================================ */
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('adminDarkMode') === 'true') {
                 document.body.classList.add('dark-mode');
+                Chart.defaults.color = '#b0a8c8';
+            } else {
+                Chart.defaults.color = '#666680';
             }
-
-            // ★ SESSION AUTH CHECK: Skip password if already logged in this session ★
+            
             if (sessionStorage.getItem('adminAuthenticated') === 'true') {
                 document.getElementById('gate').style.display = 'none';
                 document.getElementById('dashboard-panel').classList.remove('hidden');
@@ -366,177 +215,386 @@
         });
 
         function checkPassword() {
-            const input = document.getElementById('gate-input');
-            const error = document.getElementById('gate-error');
-
-            if (input.value === ADMIN_PASSWORD) {
+            if (document.getElementById('gate-input').value === ADMIN_PASSWORD) {
                 document.getElementById('gate').style.display = 'none';
                 document.getElementById('dashboard-panel').classList.remove('hidden');
-                sessionStorage.setItem('adminAuthenticated', 'true'); // Save auth state
+                sessionStorage.setItem('adminAuthenticated', 'true');
                 loadDashboardData();
             } else {
-                error.classList.remove('hidden');
-                input.value = '';
-                input.focus();
-                document.querySelector('.gate-card').style.animation = 'none';
-                requestAnimationFrame(() => document.querySelector('.gate-card').style.animation = 'gateShake 0.35s ease');
+                document.getElementById('gate-error').classList.remove('hidden');
+                document.getElementById('gate-input').value = '';
             }
         }
-
-        function logout() {
-            if (confirm('ออกจากระบบ Analytics?')) {
-                sessionStorage.removeItem('adminAuthenticated'); // Clear auth state
-                location.reload();
-            }
-        }
-
-        function toggleDarkMode() {
+        function logout() { if(confirm('ออกจากระบบ Analytics?')) { sessionStorage.removeItem('adminAuthenticated'); location.reload(); } }
+        
+        function toggleDarkMode() { 
             const isDark = document.body.classList.toggle('dark-mode');
             localStorage.setItem('adminDarkMode', isDark);
+            Chart.defaults.color = isDark ? '#b0a8c8' : '#666680';
+            if(barChartInstance) barChartInstance.update();
         }
 
         /* ================================================
-           DATA FETCHING
+           ★ THE ONSNAPSHOT UPGRADE (Real-time data) ★
            ================================================ */
-        async function loadDashboardData() {
-            const board = document.getElementById('kill-board');
-            board.innerHTML = `<div class="empty-dashboard"><h2>⏳ กำลังดึงข้อมูลจากยมโลก...</h2></div>`;
-
+        function loadDashboardData() {
+            document.getElementById('kill-board').innerHTML = `<div class="empty-dashboard"><h2>⏳ กำลังเชื่อมต่อข้อมูลแบบ Real-time...</h2></div>`;
+            
             try {
-                // Fetch Questions
-                const qSnap = await window.db.collection('questions').get();
-                rawQuestions = qSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                // Listen to Questions Collection
+                window.db.collection('questions').onSnapshot(qSnap => {
+                    rawQuestions = qSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    questionsLoaded = true;
+                    if (logsLoaded) {
+                        populateCohortDropdown();
+                        renderDashboard();
+                    }
+                }, error => {
+                    console.error("Questions Sync Error:", error);
+                });
 
-                // Fetch Answer Logs
-                const lSnap = await window.db.collection('answerLogs').get();
-                rawLogs = lSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                // Listen to Answer Logs Collection
+                window.db.collection('answerLogs').onSnapshot(lSnap => {
+                    rawLogs = lSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    logsLoaded = true;
+                    if (questionsLoaded) {
+                        populateCohortDropdown();
+                        renderDashboard();
+                    }
+                }, error => {
+                    console.error("Logs Sync Error:", error);
+                    document.getElementById('kill-board').innerHTML = `<div class="empty-dashboard" style="color:var(--error);"><h2>❌ เกิดข้อผิดพลาด</h2><p>${error.message}</p></div>`;
+                });
 
-                populateCohortDropdown();
-                renderDashboard();
             } catch (e) {
-                console.error("Dashboard Load Error:", e);
-                board.innerHTML = `
-                    <div class="empty-dashboard" style="color:var(--error);">
-                        <h2>❌ เกิดข้อผิดพลาดในการโหลดข้อมูล</h2>
-                        <p>${e.message}</p>
-                        <p style="margin-top:10px; font-weight:bold;">⚠️ หมายเหตุ: โปรดแน่ใจว่าได้แก้ Firestore Rules ให้ answerLogs เป็น allow read: if true; แล้ว</p>
-                    </div>`;
+                console.error("Dashboard Init Error:", e);
+                document.getElementById('kill-board').innerHTML = `<div class="empty-dashboard" style="color:var(--error);"><h2>❌ เกิดข้อผิดพลาดในการเชื่อมต่อ</h2><p>${e.message}</p></div>`;
             }
         }
 
-        /* ================================================
-           FILTER HANDLING
-           ================================================ */
+        function handleExamFilterChange() {
+            const examType = document.getElementById('filter-exam').value;
+            const stageDrop = document.getElementById('filter-stage');
+            
+            if (examType === 'all') {
+                stageDrop.classList.add('hidden');
+                stageDrop.value = 'all';
+            } else {
+                stageDrop.classList.remove('hidden');
+                stageDrop.innerHTML = '<option value="all">ทุกด่าน (Topics)</option>';
+                STAGES[examType].forEach(s => {
+                    stageDrop.innerHTML += `<option value="${s.id}">ด่าน ${s.id} — ${s.name}</option>`;
+                });
+            }
+            renderDashboard();
+        }
+
         function handleTypeFilterChange() {
             const type = document.getElementById('filter-type').value;
             const areaDrop = document.getElementById('filter-area');
             const cohortDrop = document.getElementById('filter-cohort');
+            const memberDrop = document.getElementById('filter-member-type');
 
-            areaDrop.classList.add('hidden');
-            cohortDrop.classList.add('hidden');
-            areaDrop.value = 'all';
-            cohortDrop.value = 'all';
+            areaDrop.classList.add('hidden'); cohortDrop.classList.add('hidden'); memberDrop.classList.add('hidden');
+            areaDrop.value = 'all'; cohortDrop.value = 'all'; memberDrop.value = 'all';
 
             if (type === 'current') areaDrop.classList.remove('hidden');
-            if (type === 'newco') cohortDrop.classList.remove('hidden');
-
+            if (type === 'newco') {
+                cohortDrop.classList.remove('hidden');
+                memberDrop.classList.remove('hidden');
+            }
             renderDashboard();
         }
 
         function populateCohortDropdown() {
-            // Find all unique cohorts from logs
             const cohorts = [...new Set(rawLogs.filter(l => l.cohort).map(l => l.cohort))].sort();
             const drop = document.getElementById('filter-cohort');
+            const currentVal = drop.value;
             
             drop.innerHTML = '<option value="all">ทุกรุ่น (Cohort)</option>';
-            cohorts.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c;
-                opt.textContent = `รุ่น ${c}`;
-                drop.appendChild(opt);
+            cohorts.forEach(c => drop.innerHTML += `<option value="${c}">รุ่น ${c}</option>`);
+            
+            // Try to keep selection if valid
+            if([...drop.options].some(o => o.value === currentVal)) drop.value = currentVal;
+        }
+
+        function getFilteredLogs() {
+            const typeF = document.getElementById('filter-type').value;
+            const areaF = document.getElementById('filter-area').value;
+            const cohortF = document.getElementById('filter-cohort').value;
+            const memberF = document.getElementById('filter-member-type').value;
+
+            let logs = rawLogs;
+            if (typeF !== 'all') logs = logs.filter(l => l.playerType === typeF);
+            if (areaF !== 'all') logs = logs.filter(l => l.area === areaF);
+            if (cohortF !== 'all') logs = logs.filter(l => l.cohort === cohortF);
+            if (typeF === 'newco' && memberF !== 'all') {
+                if (memberF === 'pre') logs = logs.filter(l => l.memberNo === '00');
+                if (memberF === 'post') logs = logs.filter(l => l.memberNo !== '00');
+            }
+            return logs;
+        }
+
+        function updatePrintHeader() {
+            const now = new Date();
+            document.getElementById('print-timestamp').textContent = `สร้างรายงานเมื่อ: ${now.toLocaleDateString('th-TH')} ${now.toLocaleTimeString('th-TH')}`;
+            
+            const exam = document.getElementById('filter-exam').options[document.getElementById('filter-exam').selectedIndex].text;
+            const stage = document.getElementById('filter-stage').classList.contains('hidden') ? '' : document.getElementById('filter-stage').options[document.getElementById('filter-stage').selectedIndex].text;
+            const type = document.getElementById('filter-type').options[document.getElementById('filter-type').selectedIndex].text;
+            const memberType = document.getElementById('filter-member-type').classList.contains('hidden') ? '' : ' | ' + document.getElementById('filter-member-type').options[document.getElementById('filter-member-type').selectedIndex].text;
+
+            document.getElementById('print-filters').textContent = `ตัวกรอง: ${exam} | ${stage} | ${type} ${memberType}`;
+        }
+
+        function getPlayerAttempts(logs, targetStageId, requiredQuestions) {
+            const sLogs = logs.filter(l => l.stageId === targetStageId);
+            const pIds = [...new Set(sLogs.map(l => l.playerId))];
+            let playerStats = [];
+            
+            pIds.forEach(pid => {
+                let pLogs = sLogs.filter(l => l.playerId === pid).sort((a,b) => a.timestamp?.seconds - b.timestamp?.seconds);
+                let attempts = [];
+                let currentAttempt = [];
+                
+                pLogs.forEach(log => {
+                    if(currentAttempt.length > 0) {
+                        let prev = currentAttempt[currentAttempt.length-1];
+                        if(log.timestamp?.seconds - prev.timestamp?.seconds > 1800) { 
+                            attempts.push(currentAttempt);
+                            currentAttempt = [];
+                        }
+                    }
+                    currentAttempt.push(log);
+                    if(currentAttempt.length >= requiredQuestions) {
+                        attempts.push(currentAttempt);
+                        currentAttempt = [];
+                    }
+                });
+                if(currentAttempt.length >= requiredQuestions * 0.7) attempts.push(currentAttempt); 
+                
+                if(attempts.length > 0) {
+                    playerStats.push({ 
+                        playerId: pid, 
+                        attempts: attempts.map(a => ({
+                            score: a.filter(l => l.isCorrect).length,
+                            total: a.length
+                        }))
+                    });
+                }
+            });
+            return playerStats;
+        }
+
+        function renderStageInsights(filteredLogs) {
+            const container = document.getElementById('stage-insights');
+            container.innerHTML = '';
+            const examFilter = document.getElementById('filter-exam').value;
+
+            let html = '';
+            let showContainer = false;
+
+            const stage1Stats = getPlayerAttempts(filteredLogs, 1, 10);
+            if (stage1Stats.length > 0) {
+                showContainer = true;
+                let passFirstTry = 0, totalPassers = 0, sumAttemptsToPass = 0;
+
+                stage1Stats.forEach(p => {
+                    let passedOnAttempt = -1;
+                    for(let i=0; i<p.attempts.length; i++) {
+                        if(p.attempts[i].score >= 7) { 
+                            passedOnAttempt = i + 1;
+                            break;
+                        }
+                    }
+                    if(passedOnAttempt === 1) passFirstTry++;
+                    if(passedOnAttempt > 0) {
+                        totalPassers++;
+                        sumAttemptsToPass += passedOnAttempt;
+                    }
+                });
+
+                const firstTryPct = Math.round((passFirstTry / stage1Stats.length) * 100) || 0;
+                const avgAttempts = totalPassers > 0 ? (sumAttemptsToPass / totalPassers).toFixed(1) : 0;
+
+                html += `
+                    <div class="overview-card" style="border-top: 4px solid #3b82f6;">
+                        <p class="overview-label">🛡️ จรรยาบรรณ (ด่าน 1)</p>
+                        <h2 class="overview-value" style="color: #3b82f6; font-size: 32px;">${firstTryPct}%</h2>
+                        <p class="header-stats">สอบผ่านตั้งแต่รอบแรก (${passFirstTry}/${stage1Stats.length} คน)</p>
+                        <div style="margin-top:12px; font-size:13px; color:var(--text-main); background:var(--surface-2); padding:8px; border-radius:6px; border: 1px dashed var(--border);">
+                            คนที่สอบผ่านใช้เวลาเฉลี่ย <strong>${avgAttempts} รอบ</strong>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (examFilter === 'all' || examFilter === 'life') {
+                const lifeLogs = filteredLogs.filter(l => l.examType === 'life');
+                const stage2Stats = getPlayerAttempts(lifeLogs, 2, 20);
+                
+                if (stage2Stats.length > 0) {
+                    showContainer = true;
+                    let above60 = 0, below60 = 0;
+                    
+                    stage2Stats.forEach(p => {
+                        let bestScore = Math.max(...p.attempts.map(a => a.score));
+                        if(bestScore >= 12) above60++;
+                        else below60++;
+                    });
+
+                    const total2 = above60 + below60;
+                    const abovePct = Math.round((above60 / total2) * 100) || 0;
+                    const belowPct = Math.round((below60 / total2) * 100) || 0;
+
+                    html += `
+                        <div class="overview-card" style="border-top: 4px solid #10b981;">
+                            <p class="overview-label">📈 หลักการประกันชีวิต (ด่าน 2)</p>
+                            <h2 class="overview-value" style="color: #10b981; font-size: 32px;">${abovePct}%</h2>
+                            <p class="header-stats">ทำคะแนนได้สูงกว่า 60% (${above60} คน)</p>
+                            <div style="margin-top:12px; width:100%; height:8px; background:var(--error); border-radius:4px; overflow:hidden; display:flex;">
+                                <div style="width:${abovePct}%; background:#10b981; height:100%;"></div>
+                            </div>
+                            <p style="font-size:11px; margin-top:6px; color:var(--error); font-weight: bold;">${belowPct}% ผู้เรียนทำคะแนนต่ำกว่าเกณฑ์ (${below60} คน)</p>
+                        </div>
+                    `;
+                }
+            }
+
+            container.innerHTML = html;
+            container.style.display = showContainer ? 'grid' : 'none';
+        }
+
+        function renderMacroChart(killData) {
+            const wrapper = document.getElementById('chart-wrapper');
+            if(killData.length === 0) { wrapper.classList.remove('active'); return; }
+            wrapper.classList.add('active');
+
+            const ctx = document.getElementById('macroChart').getContext('2d');
+            if(barChartInstance) barChartInstance.destroy();
+            
+            const topData = killData.slice(0, 10);
+            const labels = topData.map(d => 'Q: ' + d.question.questionText.substring(0, 25) + '...');
+            const dataRates = topData.map(d => Math.round(d.stats.rate * 100));
+            
+            const bgColors = topData.map(d => {
+                if(d.question.stageId === 1) return '#3b82f6'; 
+                if(d.question.stageId === 2) return '#10b981'; 
+                return '#FA4786'; 
+            });
+
+            barChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Kill Rate (%)',
+                        data: dataRates,
+                        backgroundColor: bgColors,
+                        borderRadius: 4,
+                        maxBarThickness: 50
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: 'Top 10 คำถามปราบเซียน (แยกสีตามด่าน)', font: { family: 'Sarabun', size: 16 } },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    const item = topData[context.dataIndex];
+                                    return `จำนวนคนตอบผิด: ${item.stats.wrong} จาก ${item.stats.total} ครั้ง`;
+                                }
+                            },
+                            titleFont: { family: 'Sarabun' },
+                            bodyFont: { family: 'Sarabun' }
+                        }
+                    },
+                    scales: { 
+                        y: { beginAtZero: true, max: 100, ticks: { callback: function(value){return value+"%"} } },
+                        x: { ticks: { font: { family: 'Sarabun', size: 10 } } }
+                    }
+                }
             });
         }
 
-        /* ================================================
-           MAIN RENDER PIPELINE
-           ================================================ */
         function renderDashboard() {
-            // 1. Calculate Top Stats
+            updatePrintHeader();
             renderTopStats();
 
-            // 2. Filter questions based on examType filter
             const examFilter = document.getElementById('filter-exam').value;
+            const stageFilter = document.getElementById('filter-stage').value;
+            
             let activeQuestions = rawQuestions;
-            if (examFilter !== 'all') {
-                activeQuestions = rawQuestions.filter(q => q.examType === examFilter);
-            }
+            if (examFilter !== 'all') activeQuestions = activeQuestions.filter(q => q.examType === examFilter);
+            if (stageFilter !== 'all') activeQuestions = activeQuestions.filter(q => String(q.stageId) === stageFilter);
 
-            // 3. Filter Logs based on current filters
             const filteredLogs = getFilteredLogs();
 
-            // 4. Calculate and sort Kill Rates
+            renderStageInsights(filteredLogs);
+
             const killData = activeQuestions.map(q => {
                 const qLogs = filteredLogs.filter(l => l.questionId === q.id);
-                const stats = calculateKillRate(qLogs);
                 
-                // Also calculate sub-stats for the breakdown
-                const hqLogs = qLogs.filter(l => l.playerType === 'hq');
-                const currLogs = qLogs.filter(l => l.playerType === 'current');
-                const newcoLogs = qLogs.filter(l => l.playerType === 'newco');
+                let leftPicks = 0, rightPicks = 0;
+                qLogs.forEach(l => {
+                    if ((l.isCorrect && q.correctAnswer === 'left') || (!l.isCorrect && q.correctAnswer === 'right')) leftPicks++;
+                    else rightPicks++;
+                });
+
+                const calcStatsByPeople = (lg) => {
+                    if(!lg || lg.length === 0) return {wrong: 0, total: 0, rate: 0};
+                    const uniqueP = [...new Set(lg.map(l => l.playerId))];
+                    let wrongCount = 0;
+                    uniqueP.forEach(pid => {
+                        if(lg.filter(l => l.playerId === pid).some(l => !l.isCorrect)) wrongCount++;
+                    });
+                    return {wrong: wrongCount, total: uniqueP.length, rate: wrongCount/uniqueP.length};
+                };
+
+                const calcOverallStats = (lg) => {
+                    if(!lg || lg.length === 0) return {wrong: 0, total: 0, rate: 0};
+                    const method = document.getElementById('calc-method') ? document.getElementById('calc-method').value : 'attempts'; 
+                    if (method === 'attempts') {
+                        const wrong = lg.filter(l => !l.isCorrect).length;
+                        return {wrong, total: lg.length, rate: wrong/lg.length};
+                    } else {
+                        return calcStatsByPeople(lg);
+                    }
+                };
 
                 return {
                     question: q,
                     totalLogs: qLogs.length,
-                    stats: stats,
-                    hqStats: calculateKillRate(hqLogs),
-                    currStats: calculateKillRate(currLogs),
-                    newcoStats: calculateKillRate(newcoLogs)
+                    stats: calcOverallStats(qLogs),
+                    hqStats: calcStatsByPeople(qLogs.filter(l => l.playerType === 'hq')),
+                    currStats: calcStatsByPeople(qLogs.filter(l => l.playerType === 'current')),
+                    newcoStats: calcStatsByPeople(qLogs.filter(l => l.playerType === 'newco')),
+                    doorStats: { left: leftPicks, right: rightPicks }
                 };
-            }).filter(item => item.totalLogs > 0); // Only show questions that have been attempted
+            }).filter(item => item.totalLogs > 0);
 
-            // Sort by highest kill rate first, then by total attempts
-            killData.sort((a, b) => b.stats.rate - a.stats.rate || b.totalLogs - a.totalLogs);
+            const sortMethod = document.getElementById('filter-sort').value;
+            killData.sort((a, b) => {
+                if (sortMethod === 'rate') return b.stats.rate - a.stats.rate || b.totalLogs - a.totalLogs;
+                if (sortMethod === 'wrong') return b.stats.wrong - a.stats.wrong;
+                if (sortMethod === 'attempts') return b.totalLogs - a.totalLogs;
+            });
 
-            // Phase 4: Save globally for Excel Export
             currentKillData = killData;
-
-            // 5. Render the UI
+            
+            renderMacroChart(killData);
             drawKillBoard(killData);
         }
 
-        function getFilteredLogs() {
-            const typeFilter = document.getElementById('filter-type').value;
-            const areaFilter = document.getElementById('filter-area').value;
-            const cohortFilter = document.getElementById('filter-cohort').value;
-
-            let logs = rawLogs;
-
-            if (typeFilter !== 'all') {
-                logs = logs.filter(l => l.playerType === typeFilter);
-            }
-            if (areaFilter !== 'all') {
-                logs = logs.filter(l => l.area === areaFilter);
-            }
-            if (cohortFilter !== 'all') {
-                logs = logs.filter(l => l.cohort === cohortFilter);
-            }
-
-            return logs;
-        }
-
-        /* ================================================
-           MATH ENGINE
-           ================================================ */
         function renderTopStats() {
-            // Stats always show the unfiltered totals to give perspective
             const uniqueIds = [...new Set(rawLogs.map(l => l.playerId))];
-            
             let hqCount = 0, currCount = 0, newcoCount = 0;
             uniqueIds.forEach(id => {
                 const playerLogs = rawLogs.filter(l => l.playerId === id);
                 if (playerLogs.length === 0) return;
-                
-                // Assume player type based on their most recent log
                 const type = playerLogs[playerLogs.length - 1].playerType;
                 if (type === 'hq') hqCount++;
                 if (type === 'current') currCount++;
@@ -550,103 +608,10 @@
             document.getElementById('stat-newco').textContent = newcoCount;
         }
 
-        function calculateKillRate(logs) {
-            if (!logs || logs.length === 0) return { wrong: 0, total: 0, rate: 0 };
-            
-            const method = document.getElementById('calc-method').value;
-
-            if (method === 'attempts') {
-                // Method A: Raw attempts
-                const wrong = logs.filter(l => !l.isCorrect).length;
-                return { wrong, total: logs.length, rate: wrong / logs.length };
-            } else {
-                // Method B: Unique Players
-                const uniquePlayers = [...new Set(logs.map(l => l.playerId))];
-                let wrongCount = 0;
-                
-                uniquePlayers.forEach(pid => {
-                    // If they got it wrong AT LEAST ONCE, they are counted as "killed" by this question
-                    const pLogs = logs.filter(l => l.playerId === pid);
-                    const hasFailed = pLogs.some(l => !l.isCorrect);
-                    if (hasFailed) wrongCount++;
-                });
-
-                return { wrong: wrongCount, total: uniquePlayers.length, rate: wrongCount / uniquePlayers.length };
-            }
+        function toggleOptions(qId) {
+            document.getElementById(`opts-${qId}`).classList.toggle('active');
         }
 
-        /* ================================================
-           PHASE 4: EXCEL EXPORT
-           ================================================ */
-        function exportAnalyticsToExcel() {
-            if (typeof XLSX === 'undefined') {
-                alert("⏳ กำลังโหลดไลบรารี Excel โปรดรอสักครู่แล้วกดอีกครั้ง...");
-                return;
-            }
-            if (currentKillData.length === 0 && rawLogs.length === 0) {
-                alert("❌ ไม่มีข้อมูลสำหรับ Export");
-                return;
-            }
-
-            // 1. Create Summary Sheet Data
-            const summaryData = currentKillData.map(item => ({
-                "ประเภท": item.question.examType === 'life' ? 'ชีวิต' : 'วินาศภัย',
-                "ด่าน": item.question.stageId,
-                "คำถาม": item.question.questionText,
-                "Kill Rate (%)": Math.round(item.stats.rate * 100) + '%',
-                "รวม ผิด/พยายามทั้งหมด": `${item.stats.wrong}/${item.stats.total}`,
-                "สนญ. ผิด/ทั้งหมด": `${item.hqStats.wrong}/${item.hqStats.total}`,
-                "ปัจจุบัน ผิด/ทั้งหมด": `${item.currStats.wrong}/${item.currStats.total}`,
-                "New CO ผิด/ทั้งหมด": `${item.newcoStats.wrong}/${item.newcoStats.total}`
-            }));
-
-            // 2. Create Raw Logs Sheet Data (respecting current filters)
-            const filteredLogs = getFilteredLogs();
-            const logsData = filteredLogs.map(l => {
-                const q = rawQuestions.find(q => q.id === l.questionId);
-                
-                let pType = 'ไม่ระบุ';
-                if (l.playerType === 'hq') pType = 'สำนักงานใหญ่';
-                else if (l.playerType === 'current') pType = 'พนักงานปัจจุบัน';
-                else if (l.playerType === 'newco') pType = 'New CO';
-
-                // Format timestamp beautifully
-                let dateStr = 'N/A';
-                if (l.timestamp && l.timestamp.seconds) {
-                    dateStr = new Date(l.timestamp.seconds * 1000).toLocaleString('th-TH');
-                }
-
-                return {
-                    "วัน/เวลา": dateStr,
-                    "รหัสพนักงาน": l.playerId,
-                    "กลุ่มพนักงาน": pType,
-                    "พื้นที่": l.area || '-',
-                    "รุ่น (Cohort)": l.cohort || '-',
-                    "เลขที่": l.memberNo || '-',
-                    "ประเภทข้อสอบ": l.examType === 'life' ? 'ชีวิต' : 'วินาศภัย',
-                    "ด่าน": l.stageId,
-                    "คำถาม": q ? q.questionText : '(คำถามถูกลบจากระบบ)',
-                    "ผลลัพธ์": l.isCorrect ? '✅ ตอบถูก' : '❌ ตอบผิด'
-                };
-            });
-
-            // 3. Generate Excel
-            const wb = XLSX.utils.book_new();
-            
-            const wsSummary = XLSX.utils.json_to_sheet(summaryData);
-            XLSX.utils.book_append_sheet(wb, wsSummary, "Kill Rate Summary");
-
-            if (logsData.length > 0) {
-                const wsLogs = XLSX.utils.json_to_sheet(logsData);
-                XLSX.utils.book_append_sheet(wb, wsLogs, "Raw Answer Logs");
-            }
-
-            XLSX.writeFile(wb, "haunted_insurance_analytics.xlsx");
-        }
-
-        /* ================================================
-           UI RENDERING
-           ================================================ */
         function getColorClass(rate) {
             if (rate <= 0.30) return 'fill-safe';
             if (rate <= 0.60) return 'fill-moderate';
@@ -669,12 +634,15 @@
                 const pct = Math.round(stats.rate * 100);
                 const colorClass = getColorClass(stats.rate);
                 
-                // Boss tier logic
+                const totalAnswers = item.totalLogs; 
+                const leftPct = totalAnswers > 0 ? Math.round((item.doorStats.left / totalAnswers) * 100) : 0;
+                const rightPct = totalAnswers > 0 ? Math.round((item.doorStats.right / totalAnswers) * 100) : 0;
+
                 const isBoss = stats.rate > 0.80 && stats.total >= 3; 
-                let bossBadge = '';
-                if (isBoss) bossBadge = `<span style="color:var(--error); font-weight:bold; font-size:12px; margin-left:10px;">💀 BOSS TIER</span>`;
+                let bossBadge = isBoss ? `<span style="color:var(--error); font-weight:bold; font-size:12px; margin-left:10px;">💀 BOSS TIER</span>` : '';
 
                 const typeLabel = q.examType === 'life' ? '💙 ชีวิต' : '🤍 วินาศภัย';
+                const stageName = STAGES[q.examType].find(s => s.id === q.stageId)?.name || '';
                 
                 const card = document.createElement('div');
                 card.className = `kr-card ${isBoss ? 'boss-tier' : ''}`;
@@ -686,10 +654,9 @@
                             ${q.questionText}
                             ${bossBadge}
                         </div>
-                        <div class="q-stage-chip kr-stage-chip">${typeLabel} │ ด่าน ${q.stageId}</div>
+                        <div class="q-stage-chip kr-stage-chip">${typeLabel} │ ด่าน ${q.stageId} ${stageName}</div>
                     </div>
 
-                    <!-- Main Progress Bar -->
                     <div class="bar-wrap">
                         <div class="bar-label-row">
                             <span class="bar-title">💀 Overall Kill Rate</span>
@@ -700,17 +667,30 @@
                         </div>
                     </div>
 
-                    <!-- Breakdown Sub-bars -->
-                    <div class="kr-breakdown">
+                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 15px; text-align: right;">* แถบด้านล่างวัดจากจำนวนคน (Unique Players)</div>
+                    <div class="kr-breakdown" style="margin-top: 4px; border-top:none; padding-top:0;">
                         ${buildSubBar('🏢 สนญ.', item.hqStats)}
                         ${buildSubBar('👤 ปัจจุบัน', item.currStats)}
                         ${buildSubBar('🆕 New CO', item.newcoStats)}
+                    </div>
+
+                    <button class="kr-options-toggle" onclick="toggleOptions('${q.id}')">👁️ ดูรายละเอียดการเลือกประตู</button>
+                    <div id="opts-${q.id}" class="kr-options-panel">
+                        <div class="opt-door ${q.correctAnswer === 'left' ? 'is-correct' : 'is-wrong'}">
+                            <strong>◀ ประตูซ้าย ${q.correctAnswer === 'left' ? '✅ (ถูก)' : '❌ (ผิด)'}</strong>
+                            <span>${q.leftOption}</span>
+                            <div class="opt-stats">${leftPct}% เลือกตอบ (${item.doorStats.left} ครั้ง)</div>
+                        </div>
+                        <div class="opt-door ${q.correctAnswer === 'right' ? 'is-correct' : 'is-wrong'}">
+                            <strong>ประตูขวา ▶ ${q.correctAnswer === 'right' ? '✅ (ถูก)' : '❌ (ผิด)'}</strong>
+                            <span>${q.rightOption}</span>
+                            <div class="opt-stats">${rightPct}% เลือกตอบ (${item.doorStats.right} ครั้ง)</div>
+                        </div>
                     </div>
                 `;
 
                 board.appendChild(card);
 
-                // Small delay to trigger CSS width transition
                 setTimeout(() => {
                     card.querySelectorAll('.bar-fill').forEach(el => {
                         el.style.width = el.getAttribute('data-target-width') || el.style.width;
@@ -721,21 +701,50 @@
 
         function buildSubBar(label, stats) {
             if (stats.total === 0) return `<div class="sub-bar-col"><span class="sub-bar-title">${label}</span><span class="sub-bar-text" style="color:var(--border-dark)">ไม่มีข้อมูล</span></div>`;
-            
             const pct = Math.round(stats.rate * 100);
             const colorClass = getColorClass(stats.rate);
-
             return `
                 <div class="sub-bar-col">
                     <span class="sub-bar-title">${label}</span>
                     <div class="sub-bar-track">
                         <div class="bar-fill ${colorClass}" style="width: 0%" data-target-width="${pct}%"></div>
                     </div>
-                    <span class="sub-bar-text">${pct}% (${stats.wrong}/${stats.total})</span>
+                    <span class="sub-bar-text">${pct}% (${stats.wrong} จาก ${stats.total} คน)</span>
                 </div>
             `;
         }
 
+        function exportAnalyticsToExcel() {
+            if (typeof XLSX === 'undefined') { alert("⏳ กำลังโหลดไลบรารี Excel โปรดรอสักครู่แล้วกดอีกครั้ง..."); return; }
+            if (currentKillData.length === 0 && rawLogs.length === 0) { alert("❌ ไม่มีข้อมูลสำหรับ Export"); return; }
+
+            const summaryData = currentKillData.map(item => ({
+                "ประเภท": item.question.examType === 'life' ? 'ชีวิต' : 'วินาศภัย', "ด่าน": item.question.stageId, "คำถาม": item.question.questionText,
+                "Kill Rate (%)": Math.round(item.stats.rate * 100) + '%', "รวม ผิด/พยายามทั้งหมด": `${item.stats.wrong}/${item.stats.total}`,
+                "สนญ. ผิด/ทั้งหมด": `${item.hqStats.wrong}/${item.hqStats.total}`, "ปัจจุบัน ผิด/ทั้งหมด": `${item.currStats.wrong}/${item.currStats.total}`,
+                "New CO ผิด/ทั้งหมด": `${item.newcoStats.wrong}/${item.newcoStats.total}`
+            }));
+
+            const filteredLogs = getFilteredLogs();
+            const logsData = filteredLogs.map(l => {
+                const q = rawQuestions.find(q => q.id === l.questionId);
+                let pType = 'ไม่ระบุ';
+                if (l.playerType === 'hq') pType = 'สำนักงานใหญ่'; else if (l.playerType === 'current') pType = 'พนักงานปัจจุบัน'; else if (l.playerType === 'newco') pType = 'New CO';
+                let dateStr = 'N/A';
+                if (l.timestamp && l.timestamp.seconds) dateStr = new Date(l.timestamp.seconds * 1000).toLocaleString('th-TH');
+
+                return {
+                    "วัน/เวลา": dateStr, "รหัสพนักงาน": l.playerId, "กลุ่มพนักงาน": pType, "พื้นที่": l.area || '-',
+                    "รุ่น (Cohort)": l.cohort || '-', "เลขที่": l.memberNo || '-', "ประเภทข้อสอบ": l.examType === 'life' ? 'ชีวิต' : 'วินาศภัย',
+                    "ด่าน": l.stageId, "คำถาม": q ? q.questionText : '(คำถามถูกลบจากระบบ)', "ผลลัพธ์": l.isCorrect ? '✅ ตอบถูก' : '❌ ตอบผิด'
+                };
+            });
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(summaryData), "Kill Rate Summary");
+            if (logsData.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(logsData), "Raw Answer Logs");
+            XLSX.writeFile(wb, "haunted_insurance_analytics.xlsx");
+        }
     </script>
 </body>
 </html>

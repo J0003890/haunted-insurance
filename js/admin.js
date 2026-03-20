@@ -134,6 +134,41 @@ function populateStageDropdown() {
   if (prevVal && select.querySelector(`option[value="${prevVal}"]`)) {
     select.value = prevVal;
   }
+  
+  toggleEthicsField(); // ★ NEW: Check if we need to show the ethics dropdown
+}
+
+/* ================================================
+   FORM — ETHICS FIELD TOGGLE (NEW)
+   Shows the ethics rule dropdown only for Stage 1
+   ================================================ */
+function toggleEthicsField() {
+  const type = document.querySelector('input[name="insuranceType"]:checked').value;
+  const stageId = parseInt(document.getElementById('stage-select').value);
+  const ethicsGroup = document.getElementById('ethics-group');
+  const ethicsSelect = document.getElementById('ethics-select');
+  
+  if (!ethicsGroup || !ethicsSelect) return; // Guard clause in case HTML isn't updated yet
+
+  const prevVal = ethicsSelect.value;
+  ethicsSelect.innerHTML = '<option value="">-- ระบุข้อจรรยาบรรณ --</option>';
+
+  if (stageId === 1) {
+    ethicsGroup.classList.remove('hidden');
+    const maxRules = type === 'life' ? 10 : 6; // 10 for Life, 6 for Non-life
+    for (let i = 1; i <= maxRules; i++) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `ข้อที่ ${i}`;
+      ethicsSelect.appendChild(opt);
+    }
+    if (prevVal && ethicsSelect.querySelector(`option[value="${prevVal}"]`)) {
+      ethicsSelect.value = prevVal;
+    }
+  } else {
+    ethicsGroup.classList.add('hidden');
+    ethicsSelect.value = '';
+  }
 }
 
 
@@ -212,16 +247,26 @@ function readForm() {
   const explanation    = document.getElementById('explanation').value.trim();
   const rarity         = document.getElementById('rarity-select').value;
   const isActive       = document.querySelector('input[name="isActive"]:checked')?.value === 'true';
+  
+  const ethicsSelect   = document.getElementById('ethics-select');
+  const ethicsRule     = ethicsSelect ? ethicsSelect.value : ''; // ★ NEW: Read ethics rule
 
   // Basic validation
   if (!questionText || !leftOption || !rightOption || !explanation) {
     showFormMessage('กรุณากรอกข้อมูลให้ครบทุกช่องที่มีเครื่องหมาย *', 'error');
     return null;
   }
+  
+  // Ethics validation if stage 1
+  if (stageId === 1 && !ethicsRule) {
+    showFormMessage('กรุณาระบุจรรยาบรรณข้อที่', 'error');
+    return null;
+  }
 
   return {
     examType,
     stageId,
+    ethicsRule: ethicsRule ? parseInt(ethicsRule) : null, // ★ NEW: Store it
     questionText,
     leftOption,
     rightOption,
@@ -248,8 +293,25 @@ async function addQuestion(data) {
     });
 
     showFormMessage('✅ เพิ่มคำถามสำเร็จ!', 'success');
+    
+    // ★ THE FIX: Save current dropdown values before resetting the form ★
+    const savedExamType = data.examType;
+    const savedStageId  = data.stageId;
+    const savedRarity   = data.rarity;
+    const savedEthics   = data.ethicsRule;
+
     document.getElementById('question-form').reset();
-    populateStageDropdown();
+
+    // ★ Restore the saved values ★
+    document.querySelector(`input[name="insuranceType"][value="${savedExamType}"]`).checked = true;
+    populateStageDropdown(); // Rebuilds the dropdown based on insurance type
+    document.getElementById('stage-select').value = savedStageId;
+    toggleEthicsField(); // Refresh ethics dropdown
+    if(savedEthics && document.getElementById('ethics-select')) {
+        document.getElementById('ethics-select').value = savedEthics;
+    }
+    document.getElementById('rarity-select').value = savedRarity; // Remembers Rarity
+
     updateRarityPreview();
     await loadAllQuestions(); // refresh the bank
 
@@ -312,6 +374,12 @@ function enterEditMode(id) {
 
   // Fill stage (after dropdown is populated)
   document.getElementById('stage-select').value = q.stageId;
+  
+  // Fill Ethics Rule
+  toggleEthicsField();
+  if(q.ethicsRule && document.getElementById('ethics-select')) {
+      document.getElementById('ethics-select').value = q.ethicsRule;
+  }
 
   // Fill text fields
   document.getElementById('q-text-input').value = q.questionText;
@@ -383,9 +451,6 @@ async function toggleActive(id, currentStatus) {
 
 /* ================================================
    LOAD ALL QUESTIONS FROM FIRESTORE
-   Fetches the entire questions collection once.
-   All filtering is done client-side for speed
-   and to avoid Firestore composite index requirements.
    ================================================ */
 async function loadAllQuestions() {
   document.getElementById('question-bank').innerHTML =
@@ -414,7 +479,6 @@ async function loadAllQuestions() {
   } catch (e) {
     console.error('admin.js loadAllQuestions error:', e);
 
-    // Index error — give a helpful message
     if (e.message && e.message.includes('index')) {
       document.getElementById('question-bank').innerHTML = `
         <p class="loading-text">
@@ -424,7 +488,6 @@ async function loadAllQuestions() {
           รอประมาณ 1 นาที แล้ว Refresh หน้านี้
         </p>`;
 
-      // Fallback: try without orderBy
       try {
         const snap2 = await window.db.collection('questions').get();
         allQuestions = snap2.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -440,8 +503,7 @@ async function loadAllQuestions() {
 
 
 /* ================================================
-   FILTER — when insurance type filter changes,
-   update the stage filter dropdown too.
+   FILTER — when insurance type filter changes
    ================================================ */
 function onFilterTypeChange() {
   updateFilterStageDropdown();
@@ -526,7 +588,6 @@ function updateBankStats(filtered) {
 
 /* ================================================
    RENDER QUESTION BANK
-   Builds one .q-card per filtered question.
    ================================================ */
 function renderQuestionBank(filtered) {
   const bank = document.getElementById('question-bank');
@@ -543,6 +604,10 @@ function renderQuestionBank(filtered) {
     const isActive   = q.isActive !== false;
     const stageName  = getStageNameById(q.examType, q.stageId);
     const typeLabel  = q.examType === 'life' ? '💙 ชีวิต' : '🤍 วินาศภัย';
+    
+    // ★ NEW: Show ethics rule number if it exists
+    const ethicsTag  = (q.stageId === 1 && q.ethicsRule) ? ` │ จรรยาบรรณข้อ ${q.ethicsRule}` : ''; 
+    
     const leftClass  = q.correctAnswer === 'left'  ? 'correct' : '';
     const rightClass = q.correctAnswer === 'right' ? 'correct' : '';
 
@@ -553,7 +618,7 @@ function renderQuestionBank(filtered) {
     card.innerHTML = `
       <div class="q-card-top">
         ${getRarityBadgeHTML(rarity)}
-        <span class="q-stage-chip">${typeLabel} │ ด่าน ${q.stageId} — ${stageName}</span>
+        <span class="q-stage-chip">${typeLabel} │ ด่าน ${q.stageId} — ${stageName}${ethicsTag}</span>
         <span class="q-active-chip ${isActive ? 'active' : 'inactive'}">
           ${isActive ? '✅ เปิด' : '🚫 ซ่อน'}
         </span>
@@ -623,7 +688,6 @@ function exportQuestionsToExcel() {
     return;
   }
 
-  // Apply the same filtering as the UI right now
   const typeFilter   = document.getElementById('filter-type').value;
   const stageFilter  = document.getElementById('filter-stage').value;
   const rarityFilter = document.getElementById('filter-rarity').value;
@@ -645,6 +709,7 @@ function exportQuestionsToExcel() {
   const exportData = filtered.map(q => ({
     "ประเภทประกัน": q.examType === 'life' ? 'ชีวิต' : 'วินาศภัย',
     "ด่าน": q.stageId,
+    "จรรยาบรรณข้อ": (q.stageId === 1 && q.ethicsRule) ? q.ethicsRule : '-',
     "ความหายาก": q.rarity || 'N',
     "สถานะ": q.isActive !== false ? 'เปิด' : 'ซ่อน',
     "คำถาม": q.questionText,
@@ -654,7 +719,6 @@ function exportQuestionsToExcel() {
     "คำอธิบาย": q.explanation
   }));
 
-  // Create workbook and trigger download
   const ws = XLSX.utils.json_to_sheet(exportData);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Question Bank");
@@ -666,7 +730,6 @@ function exportQuestionsToExcel() {
    UTILITIES
    ================================================ */
 
-/* Get stage name from type + id */
 function getStageNameById(insuranceType, stageId) {
   const stages = STAGES[insuranceType];
   if (!stages) return '—';
@@ -674,7 +737,6 @@ function getStageNameById(insuranceType, stageId) {
   return stage ? `${stage.emoji} ${stage.name}` : `ด่าน ${stageId}`;
 }
 
-/* Escape HTML to prevent XSS in rendered question text */
 function escapeHTML(str) {
   if (!str) return '';
   return str
@@ -685,14 +747,12 @@ function escapeHTML(str) {
     .replace(/'/g, '&#039;');
 }
 
-/* Show a message below the form */
 function showFormMessage(msg, type) {
   const el = document.getElementById('form-message');
   if (!msg) { el.classList.add('hidden'); return; }
   el.className   = `form-message ${type}`;
   el.textContent = msg;
   el.classList.remove('hidden');
-  // Auto-hide success messages after 3s
   if (type === 'success') {
     setTimeout(() => el.classList.add('hidden'), 3000);
   }
@@ -705,9 +765,6 @@ function toggleDarkMode() {
   const isDark = document.body.classList.toggle('dark-mode');
   const btn    = document.getElementById('dark-mode-btn');
 
-  // Switch icon
   if (btn) btn.textContent = isDark ? '☀️' : '🌙';
-
-  // Persist preference — survives page refresh
   localStorage.setItem('adminDarkMode', isDark);
 }
