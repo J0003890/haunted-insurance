@@ -44,6 +44,31 @@ const RARITY_DESC = {
   UR: 'คำถามยาก — หลายแนวคิดรวมกัน คนส่วนใหญ่ตอบผิด (~5% ของคลัง)',
 };
 
+/* ================================================
+   ETHICS DEFINITIONS (OIC Standard)
+   ================================================ */
+const ETHICS_LIFE = [
+  "ซื่อสัตย์สุจริต",
+  "บริการดี",
+  "รักษาความลับ",
+  "เปิดเผยข้อเท็จจริง",
+  "เบี้ยไม่เกินความสามารถ",
+  "ไม่ลดหรือเสนอลดค่าบำเหน็จ",
+  "ไม่แนะนำให้สละกรมธรรม์เดิมเพื่อทำใหม่",
+  "ไม่กล่าวให้ร้ายผู้อื่น",
+  "หมั่นศึกษาหาความรู้เพิ่มเติม",
+  "ประพฤติตนในศีลธรรมอันดีงาม"
+];
+
+const ETHICS_NONLIFE = [
+  "ซื่อสัตย์สุจริต",
+  "เป็นธรรม",
+  "มีมาตรฐาน",
+  "รักษาความลับ",
+  "สร้างความเชื่อมั่น",
+  "ไม่พูดเกินจริง"
+];
+
 
 /* ================================================
    STATE
@@ -155,13 +180,15 @@ function toggleEthicsField() {
 
   if (stageId === 1) {
     ethicsGroup.classList.remove('hidden');
-    const maxRules = type === 'life' ? 10 : 6; // 10 for Life, 6 for Non-life
-    for (let i = 1; i <= maxRules; i++) {
+    const rulesArray = type === 'life' ? ETHICS_LIFE : ETHICS_NONLIFE;
+    
+    rulesArray.forEach((desc, index) => {
       const opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = `ข้อที่ ${i}`;
+      opt.value = index + 1;
+      opt.textContent = `ข้อ ${index + 1} — ${desc}`;
       ethicsSelect.appendChild(opt);
-    }
+    });
+
     if (prevVal && ethicsSelect.querySelector(`option[value="${prevVal}"]`)) {
       ethicsSelect.value = prevVal;
     }
@@ -605,8 +632,13 @@ function renderQuestionBank(filtered) {
     const stageName  = getStageNameById(q.examType, q.stageId);
     const typeLabel  = q.examType === 'life' ? '💙 ชีวิต' : '🤍 วินาศภัย';
     
-    // ★ NEW: Show ethics rule number if it exists
-    const ethicsTag  = (q.stageId === 1 && q.ethicsRule) ? ` │ จรรยาบรรณข้อ ${q.ethicsRule}` : ''; 
+    // ★ UPDATED: Show ethics rule number and description if it exists
+    let ethicsTag = '';
+    if (q.stageId === 1 && q.ethicsRule) {
+      const rulesArray = q.examType === 'life' ? ETHICS_LIFE : ETHICS_NONLIFE;
+      const desc = rulesArray[q.ethicsRule - 1] || '';
+      ethicsTag = ` │ จรรยาบรรณข้อ ${q.ethicsRule} (${desc})`;
+    }
     
     const leftClass  = q.correctAnswer === 'left'  ? 'correct' : '';
     const rightClass = q.correctAnswer === 'right' ? 'correct' : '';
@@ -706,18 +738,27 @@ function exportQuestionsToExcel() {
   }
 
   // Format data specifically for Excel
-  const exportData = filtered.map(q => ({
-    "ประเภทประกัน": q.examType === 'life' ? 'ชีวิต' : 'วินาศภัย',
-    "ด่าน": q.stageId,
-    "จรรยาบรรณข้อ": (q.stageId === 1 && q.ethicsRule) ? q.ethicsRule : '-',
-    "ความหายาก": q.rarity || 'N',
-    "สถานะ": q.isActive !== false ? 'เปิด' : 'ซ่อน',
-    "คำถาม": q.questionText,
-    "ประตูซ้าย": q.leftOption,
-    "ประตูขวา": q.rightOption,
-    "เฉลย": q.correctAnswer === 'left' ? 'ซ้าย' : 'ขวา',
-    "คำอธิบาย": q.explanation
-  }));
+  const exportData = filtered.map(q => {
+    let ethicsName = '-';
+    if (q.stageId === 1 && q.ethicsRule) {
+      const rulesArray = q.examType === 'life' ? ETHICS_LIFE : ETHICS_NONLIFE;
+      const desc = rulesArray[q.ethicsRule - 1] || '';
+      ethicsName = `ข้อ ${q.ethicsRule} — ${desc}`;
+    }
+
+    return {
+      "ประเภทประกัน": q.examType === 'life' ? 'ชีวิต' : 'วินาศภัย',
+      "ด่าน": q.stageId,
+      "จรรยาบรรณข้อ": ethicsName,
+      "ความหายาก": q.rarity || 'N',
+      "สถานะ": q.isActive !== false ? 'เปิด' : 'ซ่อน',
+      "คำถาม": q.questionText,
+      "ประตูซ้าย": q.leftOption,
+      "ประตูขวา": q.rightOption,
+      "เฉลย": q.correctAnswer === 'left' ? 'ซ้าย' : 'ขวา',
+      "คำอธิบาย": q.explanation
+    };
+  });
 
   const ws = XLSX.utils.json_to_sheet(exportData);
   const wb = XLSX.utils.book_new();
