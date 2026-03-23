@@ -1,0 +1,881 @@
+/* ================================================
+   สำนักงานต้องสาป — ADMIN PANEL STYLESHEET
+   css/admin.css
+   
+   Deliberately LIGHT theme — opposite of the game.
+   Company pink (#FA4786) as the primary action color.
+   ================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Press+Start+2P&display=swap');
+
+/* ================================================
+   1. VARIABLES
+   ================================================ */
+:root {
+  --pink:          #FA4786;
+  --pink-hover:    #d93570;
+  --pink-light:    #fff0f6;
+  --pink-border:   #fbb6d2;
+
+  --bg:            #f4f4f6;
+  --surface:       #ffffff;
+  --surface-2:     #f9f9fb;
+  --border:        #e2e2e8;
+  --border-dark:   #c8c8d4;
+
+  --text:          #1a1a2e;
+  --text-muted:    #666680;
+  --text-light:    #9999aa;
+
+  --correct:       #16a34a;
+  --correct-bg:    #f0fdf4;
+  --error:         #dc2626;
+  --error-bg:      #fef2f2;
+  --warning:       #d97706;
+  --warning-bg:    #fffbeb;
+
+  --rarity-n:      #8a8678;
+  --rarity-n-bg:   #f5f4f0;
+  --rarity-r:      #e8a030;
+  --rarity-r-bg:   #fff8ee;
+  --rarity-sr:     #a855f7;
+  --rarity-sr-bg:  #faf5ff;
+  --rarity-ur:     #FA4786;
+  --rarity-ur-bg:  #fff0f6;
+
+  --radius:        8px;
+  --shadow:        0 1px 4px rgba(0,0,0,0.08);
+  --shadow-md:     0 4px 12px rgba(0,0,0,0.10);
+}
+
+
+/* ================================================
+   2. RESET & BASE
+   ================================================ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.hidden { display: none !important; }
+
+
+/* ================================================
+   3. PASSWORD GATE
+   ================================================ */
+.gate-screen {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0e00 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.gate-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.gate-game-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  line-height: 2;
+}
+
+.gate-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.gate-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.gate-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 15px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.gate-input:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 3px var(--pink-light);
+}
+
+.gate-error {
+  font-size: 13px;
+  color: var(--error);
+  background: var(--error-bg);
+  padding: 8px 12px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+
+/* ================================================
+   4. HEADER
+   ================================================ */
+.admin-header {
+  background: var(--surface);
+  border-bottom: 2px solid var(--pink);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+
+.admin-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.admin-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.header-stats {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.admin-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* ================================================
+   5. MAIN TWO-COLUMN LAYOUT
+   ================================================ */
+.admin-main {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 20px;
+  padding: 20px 24px 40px;
+  max-width: 1400px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .admin-main {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+}
+
+
+/* ================================================
+   6. SECTIONS
+   ================================================ */
+.form-section,
+.bank-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.section-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Form section inner padding */
+#question-form {
+  padding: 18px;
+}
+
+
+/* ================================================
+   7. BUTTONS
+   ================================================ */
+.btn-primary {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  background: var(--pink);
+  border: none;
+  border-radius: var(--radius);
+  padding: 11px 20px;
+  cursor: pointer;
+  transition: background 0.12s, transform 0.08s;
+  white-space: nowrap;
+}
+
+.btn-primary:hover  { background: var(--pink-hover); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius);
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover { background: var(--surface-2); border-color: var(--text-muted); }
+
+.btn-ghost-sm {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 13px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 4px;
+  transition: color 0.1s, background 0.1s;
+}
+
+.btn-ghost-sm:hover { color: var(--text); background: var(--bg); }
+
+.btn-edit {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.btn-edit:hover { color: var(--text); border-color: var(--text-muted); background: white; }
+
+.btn-delete {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--error);
+  background: var(--error-bg);
+  border: 1px solid #fca5a5;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.btn-delete:hover { background: #fee2e2; border-color: var(--error); }
+
+.btn-toggle {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.btn-toggle:hover { border-color: var(--warning); color: var(--warning); }
+
+
+/* ================================================
+   8. FORM ELEMENTS
+   ================================================ */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.required { color: var(--pink); }
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 3px var(--pink-light);
+}
+
+.form-textarea {
+  resize: vertical;
+  line-height: 1.7;
+}
+
+/* Radio groups */
+.radio-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all 0.12s;
+  user-select: none;
+}
+
+.radio-label:has(input:checked) {
+  border-color: var(--pink);
+  background: var(--pink-light);
+  color: var(--pink);
+}
+
+.radio-label--correct:has(input:checked) {
+  border-color: var(--correct);
+  background: var(--correct-bg);
+  color: var(--correct);
+}
+
+.radio-label input[type="radio"] {
+  accent-color: var(--pink);
+}
+
+/* Form actions row */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.form-actions .btn-primary { flex: 1; }
+
+/* Status message */
+.form-message {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.form-message.success {
+  background: var(--correct-bg);
+  color: var(--correct);
+  border: 1px solid #86efac;
+}
+
+.form-message.error {
+  background: var(--error-bg);
+  color: var(--error);
+  border: 1px solid #fca5a5;
+}
+
+
+/* ================================================
+   9. RARITY PREVIEW
+   ================================================ */
+.rarity-preview {
+  margin-top: 8px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rarity-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1.5px solid currentColor;
+  letter-spacing: 0.5px;
+}
+
+.rarity-badge.rarity-N  { color: var(--rarity-n);  background: var(--rarity-n-bg);  }
+.rarity-badge.rarity-R  { color: var(--rarity-r);  background: var(--rarity-r-bg);  }
+.rarity-badge.rarity-SR { color: var(--rarity-sr); background: var(--rarity-sr-bg); }
+.rarity-badge.rarity-UR {
+  color: var(--rarity-ur);
+  background: var(--rarity-ur-bg);
+  box-shadow: 0 0 8px rgba(250, 71, 134, 0.25);
+  animation: urPulse 2s ease-in-out infinite;
+}
+
+@keyframes urPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(250, 71, 134, 0.25); }
+  50%       { box-shadow: 0 0 14px rgba(250, 71, 134, 0.5); }
+}
+
+.rarity-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+
+/* ================================================
+   10. FILTER BAR
+   ================================================ */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  outline: none;
+  cursor: pointer;
+  flex: 1;
+  min-width: 120px;
+  transition: border-color 0.12s;
+}
+
+.filter-select:focus { border-color: var(--pink); }
+
+
+/* ================================================
+   11. BANK STATS ROW
+   ================================================ */
+.bank-stats {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.stat-chip.total { border-color: var(--pink); color: var(--pink); background: var(--pink-light); }
+.stat-chip.n-chip  { border-color: var(--rarity-n);  color: var(--rarity-n);  background: var(--rarity-n-bg);  }
+.stat-chip.r-chip  { border-color: var(--rarity-r);  color: var(--rarity-r);  background: var(--rarity-r-bg);  }
+.stat-chip.sr-chip { border-color: var(--rarity-sr); color: var(--rarity-sr); background: var(--rarity-sr-bg); }
+.stat-chip.ur-chip { border-color: var(--rarity-ur); color: var(--rarity-ur); background: var(--rarity-ur-bg); }
+
+
+/* ================================================
+   12. QUESTION BANK CARDS
+   ================================================ */
+.question-bank {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: calc(100vh - 280px);
+  overflow-y: auto;
+}
+
+.loading-text {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 40px 20px;
+}
+
+.empty-text {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 13px;
+  padding: 40px 20px;
+}
+
+/* Individual question card */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+
+.q-card:hover {
+  border-color: var(--border-dark);
+  box-shadow: var(--shadow);
+}
+
+.q-card.inactive {
+  opacity: 0.5;
+  background: var(--surface-2);
+}
+
+/* Card top row: rarity + stage info + active badge */
+.q-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.q-stage-chip {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 7px;
+}
+
+.q-active-chip {
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 2px 7px;
+  margin-left: auto;
+}
+
+.q-active-chip.active   { color: var(--correct); background: var(--correct-bg); }
+.q-active-chip.inactive { color: var(--error);   background: var(--error-bg);   }
+
+/* Question text */
+.q-card-question {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* Options row */
+.q-card-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.q-option {
+  flex: 1;
+  min-width: 120px;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  background: var(--surface-2);
+  line-height: 1.5;
+}
+
+.q-option.correct {
+  border-color: var(--correct);
+  background: var(--correct-bg);
+  color: var(--correct);
+  font-weight: 700;
+}
+
+.q-option-label {
+  font-size: 10px;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Explanation (collapsed by default) */
+.q-card-explanation {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border-left: 3px solid var(--pink);
+  padding: 7px 10px;
+  border-radius: 0 6px 6px 0;
+  line-height: 1.6;
+  display: none;
+}
+
+.q-card.show-explanation .q-card-explanation {
+  display: block;
+}
+
+/* Card action buttons */
+.q-card-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+
+/* ================================================
+   13. SCROLLBAR
+   ================================================ */
+.question-bank::-webkit-scrollbar { width: 4px; }
+.question-bank::-webkit-scrollbar-track { background: var(--bg); }
+.question-bank::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 2px; }
+/* Gate card shake animation */
+@keyframes gateShake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-5px); }
+  80%       { transform: translateX(5px); }
+}
+/* ================================================
+   DARK MODE — Admin Panel
+   Toggled by adding .dark-mode to <body>
+   ================================================ */
+body.dark-mode {
+  --bg:            #0f0e1a;
+  --surface:       #1a1828;
+  --surface-2:     #231f35;
+  --border:        #2e2a45;
+  --border-dark:   #3d3860;
+
+  --text:          #f0eeea;
+  --text-muted:    #b0a8c8;
+  --text-light:    #554f7a;
+
+  --correct-bg:    #0a1f0a;
+  --error-bg:      #1f0a0a;
+  --warning-bg:    #1f1500;
+  --pink-light:    #2a0a18;
+  --pink-border:   #7a1a38;
+
+  --rarity-n-bg:   #1a1916;
+  --rarity-r-bg:   #1f1500;
+  --rarity-sr-bg:  #18083a;
+  --rarity-ur-bg:  #2a0a18;
+}
+
+/* Dark mode: gate card */
+body.dark-mode .gate-card {
+  background: #1a1828;
+  color: #f0eeea;
+}
+
+body.dark-mode .gate-title {
+  color: #f0eeea;
+}
+
+body.dark-mode .gate-input {
+  background: #0f0e1a;
+  color: #f0eeea;
+  border-color: #2e2a45;
+}
+
+/* Dark mode: header */
+body.dark-mode .admin-header {
+  background: #1a1828;
+  border-bottom-color: var(--pink);
+}
+
+body.dark-mode .admin-title {
+  color: #f0eeea;
+}
+
+/* Dark mode: form labels + text */
+body.dark-mode .form-label {
+  color: #f0eeea;
+}
+
+body.dark-mode .form-input,
+body.dark-mode .form-select,
+body.dark-mode .form-textarea,
+body.dark-mode .filter-select {
+  background: #0f0e1a;
+  color: #f0eeea;
+  border-color: #2e2a45;
+}
+
+body.dark-mode .form-input::placeholder,
+body.dark-mode .form-textarea::placeholder {
+  color: #554f7a;
+}
+
+/* Dark mode: radio labels */
+body.dark-mode .radio-label {
+  color: #9988cc;
+  border-color: #2e2a45;
+}
+
+body.dark-mode .radio-label:has(input:checked) {
+  background: #2a0a18;
+  border-color: var(--pink);
+  color: var(--pink);
+}
+
+body.dark-mode .radio-label--correct:has(input:checked) {
+  background: #0a1f0a;
+  border-color: #16a34a;
+  color: #16a34a;
+}
+
+/* Dark mode: section headers */
+body.dark-mode .section-header {
+  background: #231f35;
+  border-bottom-color: #2e2a45;
+}
+
+body.dark-mode .section-title {
+  color: #f0eeea;
+}
+
+/* Dark mode: question cards */
+body.dark-mode .q-card {
+  background: #1a1828;
+  border-color: #2e2a45;
+}
+
+body.dark-mode .q-card-question {
+  color: #f0eeea;
+}
+
+body.dark-mode .q-option {
+  background: #231f35;
+  border-color: #2e2a45;
+  color: #9988cc;
+}
+
+body.dark-mode .q-stage-chip {
+  background: #231f35;
+  border-color: #2e2a45;
+  color: #9988cc;
+}
+
+body.dark-mode .q-card-explanation {
+  background: #231f35;
+  color: #9988cc;
+}
+
+/* Dark mode: bank stats */
+body.dark-mode .bank-stats {
+  background: #1a1828;
+  border-bottom-color: #2e2a45;
+}
+
+body.dark-mode .stat-chip {
+  background: #231f35;
+  border-color: #2e2a45;
+  color: #9988cc;
+}
+
+/* Dark mode: scrollbar */
+body.dark-mode .question-bank::-webkit-scrollbar-track {
+  background: #0f0e1a;
+}
+
+body.dark-mode .question-bank::-webkit-scrollbar-thumb {
+  background: #3d3860;
+}
+
+/* Dark mode toggle button */
+.btn-icon-toggle {
+  font-size: 16px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 7px 10px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, transform 0.1s;
+  line-height: 1;
+}
+
+.btn-icon-toggle:hover {
+  background: var(--bg);
+  border-color: var(--pink);
+  transform: rotate(15deg);
+}
+
+body.dark-mode .btn-icon-toggle {
+  border-color: #2e2a45;
+  color: #f0eeea;
+}
