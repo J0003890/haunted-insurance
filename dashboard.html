@@ -21,6 +21,19 @@
         .chart-container { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); width: 100%; height: 350px; display: none; }
         .chart-container.active { display: block; }
 
+        /* ★ NEW: Player Summary Table Styles ★ */
+        .summary-table-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); overflow-x: auto; }
+        .summary-table-title { font-size: 16px; font-weight: 700; color: var(--pink); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; min-width: 800px; }
+        .data-table th { background: var(--surface-2); padding: 12px 16px; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .data-table td { padding: 12px 16px; border-bottom: 1px dashed var(--border-dark); color: var(--text); vertical-align: middle; }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; }
+        .badge-hq { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-curr { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-newco { background: rgba(250, 71, 134, 0.15); color: #FA4786; border: 1px solid rgba(250, 71, 134, 0.3); }
+
         .kill-board { display: flex; flex-direction: column; gap: 12px; }
         .kr-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 22px; box-shadow: var(--shadow); position: relative; overflow: hidden; transition: all 0.2s; }
         .kr-card.boss-tier { border-color: var(--error); box-shadow: 0 0 12px rgba(220, 38, 38, 0.15); }
@@ -58,13 +71,19 @@
 
         .empty-dashboard { text-align: center; padding: 60px 20px; color: var(--text-muted); background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border-dark); }
 
+        /* Modal Styles for Purge */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-title { font-size: 18px; font-weight: 700; color: var(--error); margin-bottom: 12px; }
+        .modal-actions { display: flex; gap: 12px; margin-top: 20px; }
+
         #print-header { display: none; margin-bottom: 20px; border-bottom: 2px solid var(--pink); padding-bottom: 10px;}
         @media print {
             body { background: white !important; color: black !important; }
             .admin-header, .dashboard-filters, .kr-options-toggle, .btn-secondary { display: none !important; }
             #print-header { display: block; }
             .dashboard-main { padding: 0; }
-            .overview-card, .kr-card, .chart-container { break-inside: avoid; border: 1px solid #ccc; box-shadow: none; }
+            .overview-card, .kr-card, .chart-container, .summary-table-card { break-inside: avoid; border: 1px solid #ccc; box-shadow: none; }
             .bar-track, .sub-bar-track { border: 1px solid #999; }
             .bar-fill, .sub-bar-track > div { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
         }
@@ -85,16 +104,35 @@
 
     <!-- MAIN DASHBOARD -->
     <div id="dashboard-panel" class="hidden">
+
+        <!-- PURGE MODAL -->
+        <div id="purge-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h2 class="modal-title">🧹 ปลดปล่อยวิญญาณ (Purge Data)</h2>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">เลือกรุ่นที่ต้องการลบประวัติการตอบคำถามทั้งหมด <strong>การกระทำนี้ลบถาวรและไม่สามารถกู้คืนได้</strong></p>
+                <select id="purge-cohort-select" class="filter-select" style="width: 100%; margin-bottom: 10px;">
+                    <option value="none">-- เลือกรุ่น (Cohort) ที่ต้องการลบ --</option>
+                </select>
+                <div class="modal-actions">
+                    <button class="btn-secondary" style="flex:1" onclick="closePurgeModal()">ยกเลิก</button>
+                    <button class="btn-primary" style="flex:1; background: var(--error);" onclick="executePurge()">🔥 ลบทิ้งถาวร</button>
+                </div>
+            </div>
+        </div>
+
         <header class="admin-header">
             <div class="admin-header-left">
                 <h1 class="admin-title">📊 Analytics Dashboard — สำนักงานต้องสาป</h1>
             </div>
             <div class="admin-header-right">
                 <a href="admin.html" class="btn-secondary" style="text-decoration: none;">⚙️ Admin Panel</a>
+                
+                <!-- Purge Button -->
+                <button class="btn-secondary" onclick="openPurgeModal()" style="color: var(--error); border-color: var(--error);">🧹 ล้างประวัติ</button>
+                
                 <button class="btn-secondary" onclick="window.print()" style="color: #d97706; border-color: #d97706;">🖨️ Save as PDF</button>
                 <button class="btn-secondary" onclick="exportAnalyticsToExcel()" style="color: #16a34a; border-color: #16a34a;">📥 Export Excel</button>
                 
-                <!-- ★ CHANGED: Removed manual refresh, added Live indicator ★ -->
                 <span class="btn-secondary" style="border-color: #10b981; color: #10b981; cursor: default; background: transparent;">🟢 Live (Real-time)</span>
                 
                 <button class="btn-icon-toggle" id="dark-mode-btn" onclick="toggleDarkMode()">🌙</button>
@@ -173,6 +211,28 @@
                 </select>
             </div>
 
+            <!-- ★ NEW: PLAYER SUMMARY TABLE ★ -->
+            <div class="summary-table-card">
+                <h2 class="summary-table-title">👤 สรุปผลรายบุคคล (Player Performance)</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>รหัส / เลขที่</th>
+                            <th>กลุ่มผู้เล่น</th>
+                            <th>พื้นที่ / รุ่น</th>
+                            <th style="text-align:center;">จำนวนรอบที่เล่น</th>
+                            <th style="text-align:center;">คะแนนสูงสุด (ต่อรอบ)</th>
+                            <th style="text-align:center;">คะแนนต่ำสุด (ต่อรอบ)</th>
+                            <th style="text-align:center;">ตอบถูก / ทั้งหมด</th>
+                            <th style="text-align:center;">ความแม่นยำรวม</th>
+                        </tr>
+                    </thead>
+                    <tbody id="player-summary-tbody">
+                        <tr><td colspan="8" style="text-align:center; padding:20px;">กำลังโหลด...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
             <!-- KILL BOARD -->
             <div id="kill-board" class="kill-board"></div>
         </main>
@@ -181,7 +241,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
     <script src="js/config.js"></script>
 
     <script>
@@ -198,6 +258,17 @@
             life: [ { id: 1, name: 'จรรยาบรรณประกันชีวิต', count: 10}, { id: 2, name: 'หลักการประกันชีวิต', count: 20}, { id: 3, name: 'ประมวลกฎหมายแพ่งชีวิต', count: 5}, { id: 4, name: 'พ.ร.บ. ชีวิต', count: 5} ],
             nonlife: [ { id: 1, name: 'จรรยาบรรณประกันวินาศภัย', count: 10}, { id: 2, name: 'หลักการประกันวินาศภัย', count: 5}, { id: 3, name: 'ประมวลกฎหมายแพ่งวินาศภัย', count: 10}, { id: 4, name: 'พ.ร.บ. วินาศภัย', count: 10}, { id: 5, name: 'ประกันอัคคีภัย', count: 5}, { id: 6, name: 'ประกันตัวเรือและขนส่ง', count: 5}, { id: 7, name: 'ประกันภัยรถยนต์', count: 5}, { id: 8, name: 'ประกันภัยเบ็ดเตล็ด', count: 5} ]
         };
+
+        const ETHICS_LIFE = [
+            "ซื่อสัตย์สุจริต", "บริการดี", "รักษาความลับ", "เปิดเผยข้อเท็จจริง",
+            "เบี้ยไม่เกินความสามารถ", "ไม่ลดหรือเสนอลดค่าบำเหน็จ", "ไม่แนะนำให้สละกรมธรรม์เดิมเพื่อทำใหม่",
+            "ไม่กล่าวให้ร้ายผู้อื่น", "หมั่นศึกษาหาความรู้เพิ่มเติม", "ประพฤติตนในศีลธรรมอันดีงาม"
+        ];
+        
+        const ETHICS_NONLIFE = [
+            "ซื่อสัตย์สุจริต", "เป็นธรรม", "มีมาตรฐาน", 
+            "รักษาความลับ", "สร้างความเชื่อมั่น", "ไม่พูดเกินจริง"
+        ];
 
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('adminDarkMode') === 'true') {
@@ -235,13 +306,68 @@
         }
 
         /* ================================================
-           ★ THE ONSNAPSHOT UPGRADE (Real-time data) ★
+           PURGE TOOL (Ghost Exorcism)
+           ================================================ */
+        function openPurgeModal() {
+            document.getElementById('purge-modal').classList.remove('hidden');
+        }
+
+        function closePurgeModal() {
+            document.getElementById('purge-modal').classList.add('hidden');
+            document.getElementById('purge-cohort-select').value = 'none';
+        }
+
+        async function executePurge() {
+            const cohort = document.getElementById('purge-cohort-select').value;
+            if (cohort === 'none') { alert('กรุณาเลือกรุ่นที่ต้องการลบ'); return; }
+            
+            if (!confirm(`⚠️ คำเตือน!\nคุณแน่ใจหรือไม่ที่จะลบข้อมูลการตอบทั้งหมดของ "รุ่น ${cohort}"?\nข้อมูลจะถูกลบถาวรและกู้คืนไม่ได้!`)) return;
+
+            const btn = document.querySelector('#purge-modal .btn-primary');
+            btn.textContent = '🔥 กำลังเผาวิญญาณ...';
+            btn.disabled = true;
+
+            try {
+                const snapshot = await window.db.collection('answerLogs').where('cohort', '==', cohort).get();
+                if(snapshot.empty) {
+                    alert('ไม่พบข้อมูลสำหรับรุ่นนี้');
+                    closePurgeModal();
+                    return;
+                }
+
+                const batches = [];
+                let batch = window.db.batch();
+                let count = 0;
+
+                snapshot.docs.forEach(doc => {
+                    batch.delete(doc.ref);
+                    count++;
+                    if (count === 500) {
+                        batches.push(batch.commit());
+                        batch = window.db.batch();
+                        count = 0;
+                    }
+                });
+                if (count > 0) batches.push(batch.commit());
+
+                await Promise.all(batches);
+                alert(`✅ ปลดปล่อยวิญญาณสำเร็จ (ลบข้อมูล ${snapshot.size} รายการ)`);
+            } catch(e) {
+                alert(`❌ เกิดข้อผิดพลาด: ${e.message}`);
+            } finally {
+                btn.textContent = '🔥 ลบทิ้งถาวร';
+                btn.disabled = false;
+                closePurgeModal();
+            }
+        }
+
+        /* ================================================
+           REAL-TIME DATA SYNC
            ================================================ */
         function loadDashboardData() {
             document.getElementById('kill-board').innerHTML = `<div class="empty-dashboard"><h2>⏳ กำลังเชื่อมต่อข้อมูลแบบ Real-time...</h2></div>`;
             
             try {
-                // Listen to Questions Collection
                 window.db.collection('questions').onSnapshot(qSnap => {
                     rawQuestions = qSnap.docs.map(d => ({ id: d.id, ...d.data() }));
                     questionsLoaded = true;
@@ -249,11 +375,8 @@
                         populateCohortDropdown();
                         renderDashboard();
                     }
-                }, error => {
-                    console.error("Questions Sync Error:", error);
-                });
+                }, error => console.error("Questions Sync Error:", error));
 
-                // Listen to Answer Logs Collection
                 window.db.collection('answerLogs').onSnapshot(lSnap => {
                     rawLogs = lSnap.docs.map(d => ({ id: d.id, ...d.data() }));
                     logsLoaded = true;
@@ -314,8 +437,13 @@
             drop.innerHTML = '<option value="all">ทุกรุ่น (Cohort)</option>';
             cohorts.forEach(c => drop.innerHTML += `<option value="${c}">รุ่น ${c}</option>`);
             
-            // Try to keep selection if valid
             if([...drop.options].some(o => o.value === currentVal)) drop.value = currentVal;
+
+            const purgeDrop = document.getElementById('purge-cohort-select');
+            const currentPurge = purgeDrop.value;
+            purgeDrop.innerHTML = '<option value="none">-- เลือกรุ่น (Cohort) ที่ต้องการลบ --</option>';
+            cohorts.forEach(c => purgeDrop.innerHTML += `<option value="${c}">รุ่น ${c}</option>`);
+            if([...purgeDrop.options].some(o => o.value === currentPurge)) purgeDrop.value = currentPurge;
         }
 
         function getFilteredLogs() {
@@ -347,20 +475,23 @@
             document.getElementById('print-filters').textContent = `ตัวกรอง: ${exam} | ${stage} | ${type} ${memberType}`;
         }
 
+        /* ================================================
+           ★ THE DATA FORENSIC ENGINE (Attempts Builder) ★
+           ================================================ */
         function getPlayerAttempts(logs, targetStageId, requiredQuestions) {
             const sLogs = logs.filter(l => l.stageId === targetStageId);
             const pIds = [...new Set(sLogs.map(l => l.playerId))];
             let playerStats = [];
             
             pIds.forEach(pid => {
-                let pLogs = sLogs.filter(l => l.playerId === pid).sort((a,b) => a.timestamp?.seconds - b.timestamp?.seconds);
+                let pLogs = sLogs.filter(l => l.playerId === pid).sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
                 let attempts = [];
                 let currentAttempt = [];
                 
                 pLogs.forEach(log => {
                     if(currentAttempt.length > 0) {
                         let prev = currentAttempt[currentAttempt.length-1];
-                        if(log.timestamp?.seconds - prev.timestamp?.seconds > 1800) { 
+                        if((log.timestamp?.seconds || 0) - (prev.timestamp?.seconds || 0) > 1800) { 
                             attempts.push(currentAttempt);
                             currentAttempt = [];
                         }
@@ -520,6 +651,118 @@
             });
         }
 
+        /* ================================================
+           ★ NEW: RENDER INDIVIDUAL PLAYER SUMMARY TABLE ★
+           ================================================ */
+        function renderPlayerSummary(logs) {
+            const container = document.getElementById('player-summary-tbody');
+            container.innerHTML = '';
+
+            if (logs.length === 0) {
+                container.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);">ยังไม่มีข้อมูลผู้เล่นในเงื่อนไขนี้</td></tr>';
+                return;
+            }
+
+            // Group all logs by Player ID
+            const players = {};
+            logs.forEach(l => {
+                if (!players[l.playerId]) {
+                    players[l.playerId] = {
+                        id: l.playerId,
+                        type: l.playerType,
+                        area: l.area,
+                        cohort: l.cohort,
+                        memberNo: l.memberNo,
+                        logs: []
+                    };
+                }
+                players[l.playerId].logs.push(l);
+            });
+
+            // Calculate metrics for each player using the 30-minute session algorithm
+            const summaryData = Object.values(players).map(p => {
+                // Sort logs chronologically
+                p.logs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
+
+                let sessions = [];
+                let currentSession = [];
+
+                p.logs.forEach(log => {
+                    if (currentSession.length > 0) {
+                        let prev = currentSession[currentSession.length - 1];
+                        if ((log.timestamp?.seconds || 0) - (prev.timestamp?.seconds || 0) > 1800) {
+                            sessions.push(currentSession);
+                            currentSession = [];
+                        }
+                    }
+                    currentSession.push(log);
+                });
+                if (currentSession.length > 0) sessions.push(currentSession);
+
+                let sessionScores = sessions.map(s => s.filter(l => l.isCorrect).length);
+                let highestScore = sessionScores.length > 0 ? Math.max(...sessionScores) : 0;
+                let lowestScore = sessionScores.length > 0 ? Math.min(...sessionScores) : 0;
+
+                let totalCorrect = p.logs.filter(l => l.isCorrect).length;
+                let totalAnswered = p.logs.length;
+                let accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+
+                return { 
+                    ...p, 
+                    totalSessions: sessions.length, 
+                    highestScore, 
+                    lowestScore, 
+                    totalCorrect, 
+                    totalAnswered, 
+                    accuracy 
+                };
+            });
+
+            // Sort leaderboard by Accuracy (Descending), then by Total Answered
+            summaryData.sort((a, b) => b.accuracy - a.accuracy || b.totalAnswered - a.totalAnswered);
+
+            // Render table rows
+            summaryData.forEach(p => {
+                let typeBadge = '';
+                let detail = '-';
+                let nameDisplay = p.id;
+
+                if (p.type === 'hq') {
+                    typeBadge = '<span class="badge badge-hq">สำนักงานใหญ่</span>';
+                } else if (p.type === 'current') {
+                    typeBadge = '<span class="badge badge-curr">ปัจจุบัน</span>';
+                    detail = p.area || '-';
+                } else if (p.type === 'newco') {
+                    typeBadge = '<span class="badge badge-newco">New CO</span>';
+                    detail = `รุ่น ${p.cohort || '-'}`;
+                    nameDisplay = `เลขที่ ${p.memberNo || '-'}`;
+                }
+
+                // If filtering by New CO, we show "เลขที่" but keep ID subtle for reference
+                const idSubtitle = p.type === 'newco' ? `<div style="font-size:10px; color:var(--text-muted); margin-top:2px;">ID: ${p.id}</div>` : '';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${nameDisplay}</strong> ${idSubtitle}</td>
+                    <td>${typeBadge}</td>
+                    <td>${detail}</td>
+                    <td style="text-align:center;">${p.totalSessions}</td>
+                    <td style="text-align:center; color:#10b981; font-weight:bold;">${p.highestScore}</td>
+                    <td style="text-align:center; color:var(--error); font-weight:bold;">${p.lowestScore}</td>
+                    <td style="text-align:center;">${p.totalCorrect} / ${p.totalAnswered}</td>
+                    <td style="text-align:center;">
+                        <div style="display:flex; align-items:center; gap:8px; justify-content:center;">
+                            <span style="width: 32px; text-align: right;">${p.accuracy}%</span>
+                            <div style="width:40px; height:4px; background:var(--surface-2); border-radius:2px; overflow:hidden;">
+                                <div style="width:${p.accuracy}%; background:${p.accuracy >= 60 ? '#10b981' : 'var(--error)'}; height:100%;"></div>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                container.appendChild(tr);
+            });
+        }
+
         function renderDashboard() {
             updatePrintHeader();
             renderTopStats();
@@ -534,6 +777,7 @@
             const filteredLogs = getFilteredLogs();
 
             renderStageInsights(filteredLogs);
+            renderPlayerSummary(filteredLogs); // ★ NEW: Call the summary table renderer
 
             const killData = activeQuestions.map(q => {
                 const qLogs = filteredLogs.filter(l => l.questionId === q.id);
@@ -644,6 +888,13 @@
                 const typeLabel = q.examType === 'life' ? '💙 ชีวิต' : '🤍 วินาศภัย';
                 const stageName = STAGES[q.examType].find(s => s.id === q.stageId)?.name || '';
                 
+                let ethicsTag = '';
+                if (q.stageId === 1 && q.ethicsRule) {
+                    const rulesArray = q.examType === 'life' ? ETHICS_LIFE : ETHICS_NONLIFE;
+                    const desc = rulesArray[q.ethicsRule - 1] || '';
+                    ethicsTag = `<span style="color:var(--pink); margin-left:6px;">[ข้อที่ ${q.ethicsRule}: ${desc}]</span>`;
+                }
+                
                 const card = document.createElement('div');
                 card.className = `kr-card ${isBoss ? 'boss-tier' : ''}`;
                 
@@ -651,7 +902,7 @@
                     <div class="kr-header">
                         <div class="kr-question">
                             <span style="color:var(--text-muted); font-size:12px; margin-right:8px;">#${index + 1}</span> 
-                            ${q.questionText}
+                            ${q.questionText} ${ethicsTag}
                             ${bossBadge}
                         </div>
                         <div class="q-stage-chip kr-stage-chip">${typeLabel} │ ด่าน ${q.stageId} ${stageName}</div>
@@ -718,12 +969,24 @@
             if (typeof XLSX === 'undefined') { alert("⏳ กำลังโหลดไลบรารี Excel โปรดรอสักครู่แล้วกดอีกครั้ง..."); return; }
             if (currentKillData.length === 0 && rawLogs.length === 0) { alert("❌ ไม่มีข้อมูลสำหรับ Export"); return; }
 
-            const summaryData = currentKillData.map(item => ({
-                "ประเภท": item.question.examType === 'life' ? 'ชีวิต' : 'วินาศภัย', "ด่าน": item.question.stageId, "คำถาม": item.question.questionText,
-                "Kill Rate (%)": Math.round(item.stats.rate * 100) + '%', "รวม ผิด/พยายามทั้งหมด": `${item.stats.wrong}/${item.stats.total}`,
-                "สนญ. ผิด/ทั้งหมด": `${item.hqStats.wrong}/${item.hqStats.total}`, "ปัจจุบัน ผิด/ทั้งหมด": `${item.currStats.wrong}/${item.currStats.total}`,
-                "New CO ผิด/ทั้งหมด": `${item.newcoStats.wrong}/${item.newcoStats.total}`
-            }));
+            const summaryData = currentKillData.map(item => {
+                let ethicsName = '-';
+                if (item.question.stageId === 1 && item.question.ethicsRule) {
+                    const rulesArray = item.question.examType === 'life' ? ETHICS_LIFE : ETHICS_NONLIFE;
+                    const desc = rulesArray[item.question.ethicsRule - 1] || '';
+                    ethicsName = `ข้อ ${item.question.ethicsRule} — ${desc}`;
+                }
+                
+                return {
+                    "ประเภท": item.question.examType === 'life' ? 'ชีวิต' : 'วินาศภัย', 
+                    "ด่าน": item.question.stageId, 
+                    "จรรยาบรรณข้อ": ethicsName,
+                    "คำถาม": item.question.questionText,
+                    "Kill Rate (%)": Math.round(item.stats.rate * 100) + '%', "รวม ผิด/พยายามทั้งหมด": `${item.stats.wrong}/${item.stats.total}`,
+                    "สนญ. ผิด/ทั้งหมด": `${item.hqStats.wrong}/${item.hqStats.total}`, "ปัจจุบัน ผิด/ทั้งหมด": `${item.currStats.wrong}/${item.currStats.total}`,
+                    "New CO ผิด/ทั้งหมด": `${item.newcoStats.wrong}/${item.newcoStats.total}`
+                };
+            });
 
             const filteredLogs = getFilteredLogs();
             const logsData = filteredLogs.map(l => {
@@ -733,10 +996,19 @@
                 let dateStr = 'N/A';
                 if (l.timestamp && l.timestamp.seconds) dateStr = new Date(l.timestamp.seconds * 1000).toLocaleString('th-TH');
 
+                let logEthicsName = '-';
+                if (l.stageId === 1 && q && q.ethicsRule) {
+                    const rulesArray = l.examType === 'life' ? ETHICS_LIFE : ETHICS_NONLIFE;
+                    const desc = rulesArray[q.ethicsRule - 1] || '';
+                    logEthicsName = `ข้อ ${q.ethicsRule} — ${desc}`;
+                }
+
                 return {
                     "วัน/เวลา": dateStr, "รหัสพนักงาน": l.playerId, "กลุ่มพนักงาน": pType, "พื้นที่": l.area || '-',
                     "รุ่น (Cohort)": l.cohort || '-', "เลขที่": l.memberNo || '-', "ประเภทข้อสอบ": l.examType === 'life' ? 'ชีวิต' : 'วินาศภัย',
-                    "ด่าน": l.stageId, "คำถาม": q ? q.questionText : '(คำถามถูกลบจากระบบ)', "ผลลัพธ์": l.isCorrect ? '✅ ตอบถูก' : '❌ ตอบผิด'
+                    "ด่าน": l.stageId, 
+                    "จรรยาบรรณข้อ": logEthicsName,
+                    "คำถาม": q ? q.questionText : '(คำถามถูกลบจากระบบ)', "ผลลัพธ์": l.isCorrect ? '✅ ตอบถูก' : '❌ ตอบผิด'
                 };
             });
 

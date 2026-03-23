@@ -45,12 +45,8 @@
                 <p id="header-stats" class="header-stats">กำลังโหลด...</p>
             </div>
             <div class="admin-header-right">
-                <!-- ★ PHASE 3: DASHBOARD BUTTON ★ -->
                 <a href="dashboard.html" class="btn-secondary" style="text-decoration: none; color: var(--pink); border-color: var(--pink);">📊 Dashboard</a>
-                
-                <!-- ★ PHASE 4: EXPORT BUTTON ★ -->
                 <button class="btn-secondary" onclick="exportQuestionsToExcel()" style="color: #16a34a; border-color: #16a34a;">📥 Export คำถาม</button>
-
                 <button class="btn-secondary" onclick="loadAllQuestions()">🔄 รีเฟรช</button>
                 <button class="btn-icon-toggle" id="dark-mode-btn" onclick="toggleDarkMode()"
                     title="สลับ Dark/Light Mode">
@@ -100,7 +96,17 @@
                         <label class="form-label" for="stage-select">
                             ด่าน (Stage) <span class="required">*</span>
                         </label>
-                        <select id="stage-select" class="form-select" required></select>
+                        <select id="stage-select" class="form-select" required onchange="toggleEthicsField()"></select>
+                    </div>
+
+                    <!-- ── Ethics Rule (ช่องเลือกจรรยาบรรณข้อที่) ── -->
+                    <div class="form-group hidden" id="ethics-group">
+                        <label class="form-label" for="ethics-select">
+                            จรรยาบรรณข้อที่ <span class="required">*</span>
+                        </label>
+                        <select id="ethics-select" class="form-select">
+                            <!-- จะถูกเติมอัตโนมัติด้วย JavaScript -->
+                        </select>
                     </div>
 
                     <!-- ── Question Text ── -->
